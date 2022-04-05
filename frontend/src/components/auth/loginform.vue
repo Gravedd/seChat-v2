@@ -1,17 +1,55 @@
 <template>
-    <form id="loginform">
-        <label for="logininput">Ваш логин</label>
-        <input name="login" type="text" maxlength="32" id="logininput" placeholder="Логин...">
+    <form id="loginform" v-on:submit.prevent="auth">
+        <label for="logininput">Ваша почта</label>
+        <input name="login" type="email" maxlength="32" id="logininput" placeholder="Почта..." v-model="email" required>
         <label for="passinput">Ваш пароль</label>
-        <input name="password" type="password" maxlength="32" id="passinput" placeholder="Пароль...">
+        <input name="password" type="password" maxlength="32" id="passinput" placeholder="Пароль..." v-model="password" required>
         <label>&nbsp;</label>
         <input type="submit" value="ВОЙТИ">
     </form>
 </template>
 
 <script>
+import store from "@/store"; //импорт глоб.переменных
 export default {
-    name: "loginform"
+    name: "loginform",
+    data () {
+        return {
+            email: '',
+            password: '',
+        }
+    },
+    methods: {
+        async auth() {
+            let response = await fetch(store.server + 'login', {
+                method: 'POST',
+                headers: {
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                },
+                body: JSON.stringify({
+                    'email': this.email,
+                    'password': this.password,
+                })
+            });
+            let result = await response.json();
+            let code = await response.status;
+            switch (await code) {
+                case 201:
+                    console.log('Удачно');
+                    break;
+                case 422:
+                    console.log('Ошибка 422. Не корректные данные');
+                    break;
+                case 401:
+                    console.log('Ошибка 401. Не авторизованны');
+                    break;
+                default:
+                    console.log('Ошибка ' + code);
+            }
+        }
+
+    }
 }
 </script>
 

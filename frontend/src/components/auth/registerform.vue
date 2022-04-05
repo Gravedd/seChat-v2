@@ -1,21 +1,63 @@
 <template>
-    <form id="registerform">
+    <form id="registerform" v-on:submit.prevent="auth">
         <label for="logininput">Ваш логин</label>
-        <input name="login" type="text" maxlength="32" id="logininput" placeholder="Логин...">
+        <input name="login" type="text" maxlength="32" id="logininput" placeholder="Логин..." v-model="name">
         <label for="emailinput">Ваша почта</label>
-        <input name="email" type="email" id="emailinput" placeholder="Почта...">
+        <input name="email" type="email" id="emailinput" placeholder="Почта..." v-model="email">
         <label for="passinput">Ваш пароль</label>
-        <input name="password" type="password" maxlength="32" id="passinput" placeholder="Пароль...">
+        <input name="password" type="password" maxlength="32" id="passinput" placeholder="Пароль..." v-model="password">
         <label for="passconfirminput">Подтверждение пароля</label>
-        <input name="passwordconfirm" type="password" maxlength="32" id="passconfirminput" placeholder="Пароль...">
+        <input name="passwordconfirm" type="password" maxlength="32" id="passconfirminput" placeholder="Пароль..." v-model="password_confirmation">
         <label>&nbsp;</label>
         <input type="submit" value="ЗАРЕГИСТИРОВАТСЯ">
     </form>
 </template>
 
 <script>
+import store from "@/store"; //импорт глоб.переменных
 export default {
-    name: "registerform"
+    name: "registerform",
+    data () {
+        return {
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+        }
+    },
+    methods: {
+        async auth() {
+            let response = await fetch(store.server + 'register', {
+                method: 'POST',
+                headers: {
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                },
+                body: JSON.stringify({
+                    'name': this.name,
+                    'email': this.email,
+                    'password': this.password,
+                    'password_confirmation': this.password_confirmation,
+                })
+            });
+            let result = await response.json();
+            let code = await response.status;
+            switch (await code) {
+                case 201:
+                    console.log('Удачно');
+                    break;
+                case 422:
+                    console.log('Ошибка 422. Не корректные данные');
+                    break;
+                case 401:
+                    console.log('Ошибка 401. Не авторизованны');
+                    break;
+                default:
+                    console.log('Ошибка ' + code);
+            }
+        }
+
+    }
 }
 </script>
 

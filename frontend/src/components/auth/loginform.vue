@@ -4,7 +4,7 @@
         <input name="login" type="email" maxlength="32" id="logininput" placeholder="Почта..." v-model="email" required>
         <label for="passinput">Ваш пароль</label>
         <input name="password" type="password" maxlength="32" id="passinput" placeholder="Пароль..." v-model="password" required>
-        <label>&nbsp;</label>
+        <label>&nbsp;<span class="redtext" v-if="errors">Ошибка: </span>{{errors}}</label>
         <input type="submit" value="ВОЙТИ">
     </form>
 </template>
@@ -13,10 +13,12 @@
 import store from "@/store"; //импорт глоб.переменных
 export default {
     name: "loginform",
+    components: {},
     data () {
         return {
             email: '',
             password: '',
+            errors: '',
         }
     },
     methods: {
@@ -36,20 +38,28 @@ export default {
             let code = await response.status;
             switch (await code) {
                 case 201:
-                    console.log('Удачно');
+                //Удачная авторизация
+                    //Сохраняем данные
+                    localStorage.setItem('username', result.name);
+                    localStorage.setItem('email', result.email);
+                    localStorage.setItem('token', result.token);
+                    this.$router.push('/myprofile/');//Переход к профилю
                     break;
                 case 422:
-                    console.log('Ошибка 422. Не корректные данные');
+                    showalert('Ошибка', 'Не корректные данные');
+                    this.errors = 'Не корректные данные';
                     break;
                 case 401:
-                    console.log('Ошибка 401. Не авторизованны');
+                    showalert('Ошибка', 'Неверные учетные данные');
+                    this.errors = 'Неверные учетные данные';
                     break;
                 default:
+                    howalert('Ошибка', 'Ошибка ' + code);
+                    this.errors = 'Ошибка ' + code;
                     console.log('Ошибка ' + code);
             }
         }
-
-    }
+    },
 }
 </script>
 

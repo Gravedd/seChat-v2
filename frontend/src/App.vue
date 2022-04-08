@@ -5,12 +5,16 @@
 <script>
 import theheader from "@/components/theheader";
 import thefooter from "@/components/thefooter";
-
+import '/public/alertwindow/alertwindow.css';
 export default {
     components: {
         theheader
     },
-
+    data() {
+        return {
+            test: false,
+        }
+    },
 }
 </script>
 <style>
@@ -82,6 +86,9 @@ h1, h2, h3, h4 {
 
 .red {
     background-color: var(--accent2-color) !important;
+}
+.redtext {
+    color: var(--accent2-color) !important;
 }
 
 body::-webkit-scrollbar {

@@ -4,11 +4,11 @@
             <router-link to="/">seChat</router-link>
         </div>
         <nav>
-            <router-link to="/login">Авторизация</router-link>
-            <router-link to="/dialogues">Диалоги</router-link>
-            <router-link to="/myprofile">Профиль</router-link>
-            <router-link to="/search">Поиск</router-link>
-            <router-link to="/logout">Выйти</router-link>
+            <router-link to="/login" v-show="!authst">Авторизация</router-link>
+            <router-link to="/dialogues" v-show="authst">Диалоги</router-link>
+            <router-link to="/myprofile" v-show="authst">Профиль</router-link>
+            <router-link to="/search" v-show="authst">Поиск</router-link>
+            <router-link to="/logout" v-show="authst">Выйти</router-link>
         </nav>
         <iconbutton class="menubtn" image="/icons/interface/menu.svg" nopadding="true" @click="openmenu"></iconbutton>
     </header>
@@ -19,10 +19,10 @@
         </div>
         <div class="menulist" @click="closemenu">
             <router-link to="/login">Авторизация</router-link>
-            <router-link to="/dialogues">Диалоги</router-link>
-            <router-link to="/myprofile">Профиль</router-link>
-            <router-link to="/search">Поиск</router-link>
-            <router-link to="/logout">Выйти</router-link>
+            <router-link to="/dialogues" v-show="authst">Диалоги</router-link>
+            <router-link to="/myprofile" v-show="authst">Профиль</router-link>
+            <router-link to="/search" v-show="authst">Поиск</router-link>
+            <router-link to="/logout" v-show="authst">Выйти</router-link>
         </div>
     </div>
 </template>
@@ -36,6 +36,11 @@ export default {
     data() {
         return {
             showmenu: false,
+        }
+    },
+    computed: {
+        authst() {
+            return store.getters.authstatus;
         }
     },
     store: store,

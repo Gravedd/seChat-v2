@@ -17,6 +17,9 @@ export default createStore({
         },
         gettoken: (state) => {
             return state.token;
+        },
+        authstatus: (state) => {
+            return state.authstatus;
         }
     },
     mutations: {

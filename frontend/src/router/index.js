@@ -1,5 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import IndexView from "@/views/IndexView";
+import store from '@/store';
+
+//Защита маршрутов
+const ifAuthenticated = (to, from, next) => {
+  if (store.getters.authstatus) {
+    next()
+    return
+  }
+  next('/login')
+}
+const ifNotAuthenticated = (to, from, next) => {
+  if (!store.getters.authstatus) {
+    next()
+    return
+  }
+  next('/myprofile')
+}
 
 let name = 'seChat';
 const routes = [
@@ -25,6 +42,7 @@ const routes = [
     path: '/profile/:id',
     name: 'profile',
     meta: { title: 'Профиль пользователя' },
+    beforeEnter: ifAuthenticated,
     component: () => import('../views/ProfileView.vue')
   },
     //Личный профиль
@@ -32,6 +50,7 @@ const routes = [
     path: '/myprofile',
     name: 'myprofile',
     meta: { title: 'Мой профиль' },
+    beforeEnter: ifAuthenticated,
     component: () => import('../views/MyprofileView.vue')
   },
     //Чат с пользователем
@@ -39,6 +58,7 @@ const routes = [
     path: '/dialogues/:userid',
     name: 'chat',
     meta: { title: 'Диалог' },
+    beforeEnter: ifAuthenticated,
     component: () => import('../views/ChatView.vue')
   },
   //Список диалогов
@@ -46,6 +66,7 @@ const routes = [
     path: '/dialogues/',
     name: 'dialogues',
     meta: { title: 'Диалоги' },
+    beforeEnter: ifAuthenticated,
     component: () => import('../views/DialoguesView.vue'),
   },
 
@@ -54,6 +75,7 @@ const routes = [
     path: '/search',
     name: 'search',
     meta: { title: 'Поиск' },
+    beforeEnter: ifAuthenticated,
     component: () => import('../views/SearchView.vue')
   },
 

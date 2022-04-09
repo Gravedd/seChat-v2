@@ -6,9 +6,10 @@
 import theheader from "@/components/theheader";
 import thefooter from "@/components/thefooter";
 import '/public/alertwindow/alertwindow.css';
-
+import store from '@/store';
 
 export default {
+    store: store,
     components: {
         theheader
     },
@@ -17,6 +18,9 @@ export default {
             test: false,
         }
     },
+    created() {
+        store.dispatch('CHECKLOGIN');
+    }
 }
 </script>
 <style>

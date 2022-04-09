@@ -66,5 +66,9 @@ class AuthController extends Controller
         /*$request->user()->currentAccessToken()->delete();*///Удалить текущий токен
         return response()->json(['status' => 'logged out']);
     }
+    public function checkauth(Request $request) {
+
+        return response()->json($request->user());
+    }
 
 }

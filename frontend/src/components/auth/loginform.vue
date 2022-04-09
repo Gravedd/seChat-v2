@@ -26,43 +26,7 @@ export default {
         async auth() {
             store.dispatch('LOGIN_REQUEST', {'password': this.password, 'email': this.email});
         }
-        /*async auth() {
-            let response = await fetch(store.getters.apiserver + 'login', {
-                method: 'POST',
-                headers: {
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json;charset=utf-8',
-                },
-                body: JSON.stringify({
-                    'email': this.email,
-                    'password': this.password,
-                })
-            });
-            let result = await response.json();
-            let code = await response.status;
-            switch (await code) {
-                case 201:
-                //Удачная авторизация
-                    //Сохраняем данные
-                    localStorage.setItem('username', result.name);
-                    localStorage.setItem('email', result.email);
-                    localStorage.setItem('token', result.token);
-                    this.$router.push('/myprofile/');//Переход к профилю
-                    break;
-                case 422:
-                    showalert('Ошибка', 'Не корректные данные');
-                    this.errors = 'Не корректные данные';
-                    break;
-                case 401:
-                    showalert('Ошибка', 'Неверные учетные данные');
-                    this.errors = 'Неверные учетные данные';
-                    break;
-                default:
-                    showalert('Ошибка', 'Ошибка ' + code);
-                    this.errors = 'Ошибка ' + code;
-                    console.log('Ошибка ' + code);
-            }
-        }*/
+
     },
 }
 </script>

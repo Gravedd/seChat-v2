@@ -10,10 +10,11 @@
 </template>
 
 <script>
-import store from "@/store"; //импорт глоб.переменных
+import store from "@/store";
 export default {
     name: "loginform",
     components: {},
+    store: store,
     data () {
         return {
             email: '',
@@ -23,7 +24,10 @@ export default {
     },
     methods: {
         async auth() {
-            let response = await fetch(store.server + 'login', {
+            store.dispatch('LOGIN_REQUEST', {'password': this.password, 'email': this.email});
+        }
+        /*async auth() {
+            let response = await fetch(store.getters.apiserver + 'login', {
                 method: 'POST',
                 headers: {
                     'Accept' : 'application/json',
@@ -54,11 +58,11 @@ export default {
                     this.errors = 'Неверные учетные данные';
                     break;
                 default:
-                    howalert('Ошибка', 'Ошибка ' + code);
+                    showalert('Ошибка', 'Ошибка ' + code);
                     this.errors = 'Ошибка ' + code;
                     console.log('Ошибка ' + code);
             }
-        }
+        }*/
     },
 }
 </script>

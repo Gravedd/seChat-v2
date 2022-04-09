@@ -6,6 +6,8 @@
 import theheader from "@/components/theheader";
 import thefooter from "@/components/thefooter";
 import '/public/alertwindow/alertwindow.css';
+
+
 export default {
     components: {
         theheader

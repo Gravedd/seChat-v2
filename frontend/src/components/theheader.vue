@@ -29,6 +29,7 @@
 
 <script>
 import Iconbutton from "@/components/iconbutton";
+import store from "@/store";
 export default {
     name: "theheader",
     components: {Iconbutton},
@@ -37,6 +38,7 @@ export default {
             showmenu: false,
         }
     },
+    store: store,
     methods: {
         openmenu() {
             this.showmenu = true;

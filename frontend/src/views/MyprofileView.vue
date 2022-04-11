@@ -19,9 +19,9 @@
                 <iconbutton image="/icons/interface/chats.svg">Диалоги</iconbutton>
             </router-link>
             <iconbutton @click="opensettings" image="/icons/interface/settings.svg">Настройки</iconbutton>
-            <router-link to="/logout">
+            <a @click="$store.dispatch('LOGOUT')">
                 <iconbutton image="/icons/interface/chats.svg" class="red">Выйти</iconbutton>
-            </router-link>
+            </a>
         </div>
         <div class="myprofile">
             <settings v-if="showsettings"></settings>

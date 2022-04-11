@@ -29,7 +29,6 @@ export default createStore({
             state.authstatus = value;
         },
         authsuccess (state, user) {
-            console.log(user.uid, user.name, user.email, user.token);
             state.authstatus = true;
             state.token = user.token;
                 localStorage.setItem('token', user.token);
@@ -98,7 +97,7 @@ export default createStore({
         },
         async CHECKLOGIN (context) {
             if (!context.getters.gettoken) {
-                console.log('не авторизован');
+                console.log('Не авторизован. Нет сохранненого токена');
                 return context.commit('authstatus', false);
             }
             //Отправляем запрос на сервер
@@ -111,7 +110,6 @@ export default createStore({
             });
             let result = await response.json(); //ответ в json
             let code = await response.status; //код ответа
-            console.log(result);
             switch (await code) {
                 //Удачная авторизация
                 case 200:
@@ -119,11 +117,48 @@ export default createStore({
                     break;
                 //Не удачная проверка токена
                 default:
-                    context.commit('authchecknotsuccess', false);
+                    context.commit('authchecknotsuccess');
                     router.push('/login/');
                     console.log('Не удачная проверка токена. Код ошибки: ' + code);
                     break;
             }
+        },
+        async REGISTER(context, formdata) {
+            //Отправляем запрос на сервер
+            let response = await fetch(context.getters.apiserver + 'register', {
+                method: 'POST',
+                headers: {
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                },
+                //Указываем что оправляем
+                body: JSON.stringify({
+                    'name' : formdata.name,
+                    'email' : formdata.email,
+                    'password' : formdata.password,
+                    'password_confirmation' : formdata.password_confirmation,
+                })
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 201:
+                    context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token});
+                    router.push('/myprofile/');
+                    break;
+                case 422:
+                    context.commit('authstatus', false);
+                    for (let key in result.errors) {
+                        showalert('Поле '+key, result.errors[key][0]);
+                    }
+                    break;
+                default:
+                    showalert('Ошибка', 'Ошибка:' + code);
+                    break;
+            }
+
+        },
+        LOGOUT(context) {
+            context.commit('authchecknotsuccess');
         }
 
     },

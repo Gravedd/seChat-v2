@@ -8,7 +8,7 @@
             <router-link to="/dialogues" v-show="authst">Диалоги</router-link>
             <router-link to="/myprofile" v-show="authst">Профиль</router-link>
             <router-link to="/search" v-show="authst">Поиск</router-link>
-            <router-link to="/logout" v-show="authst">Выйти</router-link>
+            <a v-show="authst" @click="$store.dispatch('LOGOUT')">Выйти</a>
         </nav>
         <iconbutton class="menubtn" image="/icons/interface/menu.svg" nopadding="true" @click="openmenu"></iconbutton>
     </header>
@@ -22,7 +22,7 @@
             <router-link to="/dialogues" v-show="authst">Диалоги</router-link>
             <router-link to="/myprofile" v-show="authst">Профиль</router-link>
             <router-link to="/search" v-show="authst">Поиск</router-link>
-            <router-link to="/logout" v-show="authst">Выйти</router-link>
+            <a v-show="authst" @click="$store.dispatch('LOGOUT')">Выйти</a>
         </div>
     </div>
 </template>

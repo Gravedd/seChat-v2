@@ -1,7 +1,7 @@
 <template>
-    <form id="registerform" v-on:submit.prevent="auth">
+    <form id="registerform" v-on:submit.prevent="register">
         <label for="logininput">Ваш логин</label>
-        <input name="login" type="text" maxlength="32" id="logininput" placeholder="Логин..." v-model="name">
+        <input name="name" type="text" maxlength="32" id="logininput" placeholder="Логин..." v-model="name">
         <label for="emailinput">Ваша почта</label>
         <input name="email" type="email" id="emailinput" placeholder="Почта..." v-model="email">
         <label for="passinput">Ваш пароль</label>
@@ -17,6 +17,7 @@
 import store from "@/store"; //импорт глоб.переменных
 export default {
     name: "registerform",
+    store: store,
     data () {
         return {
             name: '',
@@ -26,36 +27,40 @@ export default {
         }
     },
     methods: {
-        async auth() {
-            let response = await fetch(store.server + 'register', {
-                method: 'POST',
-                headers: {
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json;charset=utf-8',
-                },
-                body: JSON.stringify({
-                    'name': this.name,
-                    'email': this.email,
-                    'password': this.password,
-                    'password_confirmation': this.password_confirmation,
-                })
-            });
-            let result = await response.json();
-            let code = await response.status;
-            switch (await code) {
-                case 201:
-                    console.log('Удачно');
-                    break;
-                case 422:
-                    console.log('Ошибка 422. Не корректные данные');
-                    break;
-                case 401:
-                    console.log('Ошибка 401. Не авторизованны');
-                    break;
-                default:
-                    console.log('Ошибка ' + code);
-            }
+        async register() {
+            store.dispatch('REGISTER', {'name': this.name, 'email': this.email, 'password': this.password, 'password_confirmation': this.password_confirmation });
         }
+
+        // async auth() {
+        //     let response = await fetch(store.server + 'register', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Accept' : 'application/json',
+        //             'Content-Type': 'application/json;charset=utf-8',
+        //         },
+        //         body: JSON.stringify({
+        //             'name': this.name,
+        //             'email': this.email,
+        //             'password': this.password,
+        //             'password_confirmation': this.password_confirmation,
+        //         })
+        //     });
+        //     let result = await response.json();
+        //     let code = await response.status;
+        //     switch (await code) {
+        //         case 201:
+        //             console.log('Удачно');
+        //             break;
+        //         case 422:
+        //             console.log('Ошибка 422. Не корректные данные');
+        //             break;
+        //         case 401:
+        //             console.log('Ошибка 401. Не авторизованны');
+        //             break;
+        //         default:
+        //             console.log('Ошибка ' + code);
+        //     }
+        // }
 
     }
 }

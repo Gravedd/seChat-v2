@@ -20,8 +20,8 @@ export default {
     name: "LoginView",
     data()  {
         return {
-            showlogin: false,
-            showregister: 'active',
+            showlogin: 'active',
+            showregister: false,
         }
     },
     components: {

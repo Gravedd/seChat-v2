@@ -100,6 +100,7 @@ export default createStore({
                 console.log('Не авторизован. Нет сохранненого токена');
                 return context.commit('authstatus', false);
             }
+            context.commit('authstatus', 'waiting');//до ответа сервера
             //Отправляем запрос на сервер
             let response = await fetch(context.getters.apiserver + 'checkauth', {
                 method: 'GET',
@@ -157,8 +158,33 @@ export default createStore({
             }
 
         },
-        LOGOUT(context) {
-            context.commit('authchecknotsuccess');
+        //Выход из аккаунта
+        async LOGOUT(context) {
+            //Запрос на сервер на удаление всех токенов
+            let response = await fetch(context.getters.apiserver + 'logout', {
+                method: 'POST',
+                headers: {
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                    'Authorization' : 'Bearer ' + context.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            //Если статус 201 - все ок, иначе ошибка
+            switch (await code) {
+                //Удачная авторизация
+                case 201:
+                    context.commit('authchecknotsuccess');
+                    showalert('Успешно', 'Вы вышли из своего аккаунта');
+                    router.push('/');
+                    break;
+                //Не удачная проверка токена
+                default:
+                    context.commit('authchecknotsuccess');
+                    showalert('Ошибка' + code, 'Не известная ошибка');
+                    router.push('/');
+                    break;
+            }
         }
 
     },

@@ -5,12 +5,12 @@
         <div class="infocontainer">
             <div class="item">
                 <div class="settingtitle">Имя профиля</div>
-                <div class="settingvalue">@nickname</div>
+                <div class="settingvalue">{{ $store.getters.getname }}</div>
                 <div class="settingaction">Изменить</div>
             </div>
             <div class="item">
                 <div class="settingtitle">Почта</div>
-                <div class="settingvalue">еxample@mail.com</div>
+                <div class="settingvalue">{{ $store.getters.getemail }}</div>
                 <div class="settingaction">Изменить</div>
             </div>
             <div class="item">
@@ -30,8 +30,10 @@
 </template>
 
 <script>
+import store from '@/store';
 export default {
-    name: "settings"
+    name: "settings",
+    store: store,
 }
 </script>
 

@@ -7,7 +7,7 @@
                 </div>
                 <div class="userinfo">
                     <div class="userinfowrapper">
-                        <h3>UserName</h3>
+                        <h3>{{ $store.getters.getname }}</h3>
                         <span class="status">user status here...</span>
                     </div>
                 </div>
@@ -35,6 +35,7 @@ import thebutton from "@/components/thebutton";
 import iconbutton from "@/components/iconbutton";
 import settings from "@/components/myprofile/settings";
 import Friends from "@/components/myprofile/friends";
+import store from "@/store";
 export default {
     name: "MyprofileView",
     components: {
@@ -47,6 +48,7 @@ export default {
             showfriends: false,
         }
     },
+    store: store,
     methods: {
         opensettings() {
             this.showfriends = false;

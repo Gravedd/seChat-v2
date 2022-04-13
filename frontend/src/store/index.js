@@ -20,7 +20,17 @@ export default createStore({
         },
         authstatus: (state) => {
             return state.authstatus;
-        }
+        },
+        getname: (state) => {
+            return state.username;
+        },
+        getemail: (state) => {
+            return state.useremail;
+        },
+        getuid: (state) => {
+            return state.uid;
+        },
+
     },
     mutations: {
             //Чтобы вызвать мутацию нужно store.commit('имя_мутации', [дополнительные параметры])

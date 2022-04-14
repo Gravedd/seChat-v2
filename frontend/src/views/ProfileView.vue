@@ -7,21 +7,23 @@
             </div>
             <div class="userinfo">
                 <div class="userinfowrapper">
-                    <h3>UserName</h3>
-                    <span class="status">user status here...</span>
+                    <h3>{{ username }}</h3>
+                    <span class="status">{{ userstatus }}</span>
                 </div>
             </div>
         </div>
     </div>
     <div class="useractions">
         <iconbutton image="/icons/interface/addfriend.svg">Добавить в друзья</iconbutton>
-        <iconbutton image="/icons/interface/new-message.svg">Отправить сообщение</iconbutton>
+        <router-link :to="{ name: 'chat', params: {userid: $route.params.id}}">
+            <iconbutton image="/icons/interface/new-message.svg">Отправить сообщение</iconbutton>
+        </router-link>
     </div>
     <div class="userstatistics">
         <div class="userstatisticswrapper">
             <h2>Статистика</h2>
-            <div>Был онлайн: 30.03.2022 18:23</div>
-            <div>Зарегистрирован: 30.03.2022 18:23</div>
+            <div>Был онлайн: {{ userupdate }}</div>
+            <div>Зарегистрирован: {{ userdate }}</div>
             <div>Айди пользователя: {{ $route.params.id }}</div>
         </div>
     </div>
@@ -31,10 +33,54 @@
 <script>
 import thebutton from "@/components/thebutton";
 import iconbutton from "@/components/iconbutton";
+import store from "@/store";
+import router from "@/router";
+
+
 export default {
     name: "ProfileView",
     components: {
         thebutton, iconbutton
+    },
+    data() {
+        return {
+            username: '',
+            userstatus: '',
+            userdate: '',
+            userupdate: '',
+
+        }
+    },
+    props: ['id'],
+    async created() {
+        let response = await fetch(store.getters.apiserver + 'users/' + this.id,{
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=utf-8',
+                'Access-Control-Allow-Origin': '<origin>',
+                'Authorization': 'Bearer ' + store.getters.gettoken,
+            }
+        });
+        let result = await response.json(); //ответ в json
+        let code = await response.status; //код ответа
+        switch (await code) {
+            case 200:
+                this.username = result.name;
+                this.userstatus = result.status;
+                this.userdate = result.created_at;
+                this.userupdate= result.updated_at;
+                break;
+            case 404:
+                showalert('Ошибка 404', 'Такого пользователя не существует');
+                router.push('/');
+                break;
+            default:
+                showalert('Ошибка', 'Ошибка: ' + code);
+                router.push('/');
+                break;
+        }
+
     }
 }
 </script>

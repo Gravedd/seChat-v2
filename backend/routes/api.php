@@ -28,14 +28,20 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
      * url: /users?page={номер страницы}&q={имя искомого}
     */
     Route::get('/users', [\App\Http\Controllers\UsersController::class, 'findUsers']);
+
+    /*
+     * Получить пользователя по id
+     * url: /users/{id}
+    */
+    Route::get('/users/{userid}', [\App\Http\Controllers\UsersController::class, 'getUser']);
 });
-
-
-
 /*
  * РОУТЫ АВТОРИЗАЦИИ
  * URL: .../api/...
  */
+    //Регистрация
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+    //Логин
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    //Выход
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');

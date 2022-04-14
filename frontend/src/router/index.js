@@ -42,6 +42,7 @@ const routes = [
     path: '/profile/:id',
     name: 'profile',
     meta: { title: 'Профиль пользователя' },
+    props: true,
     beforeEnter: ifAuthenticated,
     component: () => import('../views/ProfileView.vue')
   },

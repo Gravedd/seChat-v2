@@ -17,13 +17,25 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/checkauth', function (Request $request) {
     return $request->user();
 });
+
+
+/*
+ * ГРУППЫ РОУТОВ С ПРОВЕРКОЙ АВТОРИЗАЦИИ
+ */
 Route::group(['middleware' => 'auth:sanctum'], function() {
-    Route::get('/get', function (){ return json_encode(['en'=>'1','ru'=>2]);}); //тест
+    /*
+     * Получить список пользователей
+     * url: /users?page={номер страницы}&q={имя искомого}
+    */
+    Route::get('/users', [\App\Http\Controllers\UsersController::class, 'findUsers']);
 });
 
 
 
-/* роуты авторизации */
+/*
+ * РОУТЫ АВТОРИЗАЦИИ
+ * URL: .../api/...
+ */
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');

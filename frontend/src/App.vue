@@ -46,7 +46,7 @@ a {
 }
 
 .container {
-    min-height: 875px;
+    /*min-height: 875px;*/
 }
 
 @font-face {

@@ -48,6 +48,9 @@ export default {
             showfriends: false,
         }
     },
+    props: {
+
+    },
     store: store,
     methods: {
         opensettings() {

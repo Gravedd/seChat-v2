@@ -8,6 +8,7 @@ export default createStore({
             username: localStorage.getItem('username') || '',
             useremail: localStorage.getItem('useremail') || '',
             uid: localStorage.getItem('uid') || '',
+            userstatus: localStorage.getItem('userstatus') || '',
         authstatus: false,
     },
     //Получение данных
@@ -30,6 +31,9 @@ export default createStore({
         getuid: (state) => {
             return state.uid;
         },
+        getstatus: state => {
+            return state.userstatus;
+        }
 
     },
     mutations: {
@@ -40,14 +44,21 @@ export default createStore({
         },
         authsuccess (state, user) {
             state.authstatus = true;
+
             state.token = user.token;
                 localStorage.setItem('token', user.token);
+
             state.username = user.name;
                 localStorage.setItem('username', user.name);
+
             state.useremail = user.email;
                 localStorage.setItem('email', user.email);
+
             state.uid = user.uid;
                 localStorage.setItem('uid', user.uid);
+
+            state.userstatus = user['status'];
+                localStorage.setItem('status', user.status);
         },
         authchecknotsuccess(state) {
             state.authstatus = false;
@@ -59,6 +70,8 @@ export default createStore({
                 localStorage.removeItem('username');
             state.uid = null;
                 localStorage.removeItem('uid');
+            state.userstatus = null;
+                localStorage.removeItem('userstatus');
         }
     },
     actions: {
@@ -83,7 +96,7 @@ export default createStore({
                 switch (await code) {
                     //Удачная авторизация
                     case 201:
-                        context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token});
+                        context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result.status});
                             //Переход к профилю
                         router.push('/myprofile/');
                         break;
@@ -124,7 +137,7 @@ export default createStore({
             switch (await code) {
                 //Удачная авторизация
                 case 200:
-                    context.commit('authsuccess', {'uid': result.id, 'name': result.name, 'email': result.email, 'token': context.getters.gettoken});
+                    context.commit('authsuccess', {'uid': result.id, 'name': result.name, 'email': result.email, 'token': context.getters.gettoken, 'status': result['status']});
                     break;
                 //Не удачная проверка токена
                 default:
@@ -153,7 +166,7 @@ export default createStore({
             let code = await response.status; //код ответа
             switch (await code) {
                 case 201:
-                    context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token});
+                    context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result.status});
                     router.push('/myprofile/');
                     break;
                 case 422:

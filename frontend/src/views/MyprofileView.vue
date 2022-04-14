@@ -8,7 +8,7 @@
                 <div class="userinfo">
                     <div class="userinfowrapper">
                         <h3>{{ $store.getters.getname }}</h3>
-                        <span class="status">user status here...</span>
+                        <span class="status">{{ $store.getters.getstatus }}</span>
                     </div>
                 </div>
             </div>

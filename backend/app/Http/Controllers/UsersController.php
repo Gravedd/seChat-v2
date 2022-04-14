@@ -10,9 +10,9 @@ class UsersController extends Controller
     public function findUsers () {
         if (isset($_GET['q'])) {
             $searchname = $_GET['q'];
-            $users = User::Select('id', 'name', 'status')->Where('name', 'like', '%'. $searchname .'%')->paginate(3);
+            $users = User::Select('id', 'name', 'status')->Where('name', 'like', '%'. $searchname .'%')->paginate(5);
         } else {
-            $users = User::Select('id', 'name', 'status')->paginate(3);
+            $users = User::Select('id', 'name', 'status')->paginate(5);
         }
         return response()->json($users, 200);
     }

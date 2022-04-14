@@ -71,7 +71,7 @@ export default createStore({
             state.uid = null;
                 localStorage.removeItem('uid');
             state.userstatus = null;
-                localStorage.removeItem('userstatus');
+                localStorage.removeItem('status');
         }
     },
     actions: {

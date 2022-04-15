@@ -67,7 +67,7 @@ class AuthController extends Controller
             //hash and email true
             $token = $user->createToken('authtoken')->plainTextToken;
             return response()->json([
-                'status' => true,
+                'status' => $user->status,
                 'uid' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,

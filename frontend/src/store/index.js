@@ -76,6 +76,10 @@ export default createStore({
         changename(state, newname) {
             state.username = newname;
             localStorage.setItem('username', newname);
+        },
+        changestatus(state, newstatus) {
+            state.userstatus = newstatus;
+            localStorage.setItem('status', newstatus);
         }
     },
     actions: {
@@ -100,7 +104,7 @@ export default createStore({
                 switch (await code) {
                     //Удачная авторизация
                     case 201:
-                        context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result.status});
+                        context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result['status']});
                             //Переход к профилю
                         router.push('/myprofile/');
                         break;

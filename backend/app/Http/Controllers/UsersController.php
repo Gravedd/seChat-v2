@@ -53,30 +53,50 @@ class UsersController extends Controller
      * the method is selected according to the sent data
      */
     public function changeSomething(Request $request) {
-        if ($request->newname) {
-            return $this->changename($request);
-        }
-        return response()->json(['status' => false, 'message'=>'Ошибка. Не известный метод']);
-    }
-
-    /**
-     * called from a method "changeSomething"
-     * change user name
-     * @param $request
-     * @return \Illuminate\Http\JsonResponse
-     * return status
-     */
-    public function changename($request) {
-        //new name validation
         $fields = $request->validate([
-            'newname' => 'required|string|max:32|min:3',
+            'newname' => 'string|max:32|min:3',
+            'newstatus' => 'string|max:256|min:3',
         ]);
         $user = $request->user(); //get logged user
-        $user->name = $request->newname; //change name
+        //if request has something field then write him in user
+        if ($request->newname) {
+            $user->name = $request->newname;
+        }
+        if ($request->newstatus) {
+            $user->status = $request->newstatus;
+        }
+        //Save user
         $result = $user->save(); // if success returns true
-        return response()->json(['status'=> $result]);
+        return response()->json(['status' => $result]);
     }
 
+//    /**
+//     * called from a method "changeSomething"
+//     * change user name
+//     * @param $request
+//     * @return \Illuminate\Http\JsonResponse
+//     * return status
+//     */
+//    public function changeName($request) {
+//        //new name validation
+//        $fields = $request->validate([
+//            'newname' => 'required|string|max:32|min:3',
+//        ]);
+//        $user = $request->user(); //get logged user
+//        $user->name = $request->newname; //change name
+//        $result = $user->save(); // if success returns true
+//        return response()->json(['status'=> $result]);
+//    }
+//
+//    public function changeStatus($request) {
+//        $fields = $request->validate([
+//            'newstatus' => 'required|string|max:256|min:3',
+//        ]);
+//        $user = $request->user();
+//        $user->status = $request->newstatus; //change status
+//        $result = $user->save();
+//        return response()->json(['status'=> $result]);
+//    }
 
 
 }

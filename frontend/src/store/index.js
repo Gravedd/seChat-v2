@@ -80,6 +80,10 @@ export default createStore({
         changestatus(state, newstatus) {
             state.userstatus = newstatus;
             localStorage.setItem('status', newstatus);
+        },
+        changeemail(state, newemail) {
+            state.useremail = newemail;
+            localStorage.setItem('email', newemail);
         }
     },
     actions: {

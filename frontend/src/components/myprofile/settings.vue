@@ -5,22 +5,22 @@
         <div class="infocontainer">
             <div class="item">
                 <div class="settingtitle">Имя профиля</div>
-                <div class="settingvalue"><input maxlength="32" type="text" v-model="username"></div>
+                <div class="settingvalue"><input maxlength="32" type="text" v-model="username" title="Не менее 3-х символов, не более 32 символов"></div>
                 <div class="settingaction" @click="changesomething(username, 'getname')">Изменить</div>
             </div>
             <div class="item">
                 <div class="settingtitle">Почта</div>
-                <div class="settingvalue"><input readonly maxlength="128" type="email"></div>
-                <div class="settingaction">Изменить</div>
+                <div class="settingvalue"><input maxlength="128" type="email" v-model="uemail" title="Не более 128 символов"></div>
+                <div class="settingaction" @click="changesomething(uemail, 'getemail')">Изменить</div>
             </div>
             <div class="item">
                 <div class="settingtitle">Статус</div>
-                <div class="settingvalue"><input maxlength="256" type="text" v-model="ustatus"></div>
+                <div class="settingvalue"><input maxlength="256" type="text" v-model="ustatus" title="Не менее 3-х символов, не более 256 символов"></div>
                 <div class="settingaction" @click="changesomething(ustatus, 'getstatus')">Изменить</div>
             </div>
             <div class="item">
                 <div class="settingtitle">Пароль</div>
-                <div class="settingvalue"><input readonly maxlength="64" type="email" placeholder="**********"></div>
+                <div class="settingvalue"><input disabled maxlength="64" type="email" placeholder="**********" title="Пока не доступно"></div>
                 <div class="settingaction">Изменить</div>
             </div>
             <div class="deletebtn">Удалить аккаунт</div>
@@ -38,6 +38,7 @@ export default {
         return {
             username: store.getters.getname,
             ustatus: store.getters.getstatus,
+            uemail: store.getters.getemail,
         }
     },
     methods: {
@@ -139,6 +140,9 @@ export default {
             if (type === 'getstatus') {
                 user.newstatus = this.ustatus;
             }
+            if (type === 'getemail') {
+                user.newemail = this.uemail;
+            }
             console.log(user);
             //Запрос на сервер об изменении чего-либо
             let response = await fetch(store.getters.apiserver + 'users', {
@@ -163,16 +167,25 @@ export default {
                     if (type === 'getstatus') {
                         store.commit('changestatus', this.ustatus);
                     }
+                    if (type === 'getemail') {
+                        store.commit('changestatus', this.uemail);
+                    }
                     break;
                 case 422:
-                    showalert('Ошибка!', 'Не корректные данные. Значение должно быть не менее 3 символов');
+                    if (result.errors.newemail) {
+                        showalert('Ошибка!', 'Введенная почта уже используется, или некорректна');
+                    } else {
+                        showalert('Ошибка!', 'Не корректные данные. Значение должно быть не менее 3 символов');
+                    }
                     this.username = store.getters.getname;
                     this.ustatus = store.getters.getstatus;
+                    this.uemail = store.getters.getemail;
                     break;
                 default: //Другая ошибка
                     showalert('Ошибка!', 'Ошибка:' + code);
                     this.username = store.getters.getname;
                     this.ustatus = store.getters.getstatus;
+                    this.uemail = store.getters.getemail;
                     break;
             }
 

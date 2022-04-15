@@ -56,6 +56,7 @@ class UsersController extends Controller
         $fields = $request->validate([
             'newname' => 'string|max:32|min:3',
             'newstatus' => 'string|max:256|min:3',
+            'newemail' => 'string|unique:users,email|email',
         ]);
         $user = $request->user(); //get logged user
         //if request has something field then write him in user
@@ -64,6 +65,9 @@ class UsersController extends Controller
         }
         if ($request->newstatus) {
             $user->status = $request->newstatus;
+        }
+        if ($request->newemail) {
+            $user->email = $request->newemail;
         }
         //Save user
         $result = $user->save(); // if success returns true

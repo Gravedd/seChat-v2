@@ -34,6 +34,13 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
      * url: /users/{id}
     */
     Route::get('/users/{userid}', [\App\Http\Controllers\UsersController::class, 'getUser']);
+
+    /**
+     * Роуты изменений профиля пользователя
+     * url: /users/
+     */
+    Route::patch('/users/', [\App\Http\Controllers\UsersController::class, 'changeSomething']);
+
 });
 
 

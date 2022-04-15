@@ -44,7 +44,7 @@ export default {
     },
     data() {
         return {
-            showsettings: false,
+            showsettings: true,
             showfriends: false,
         }
     },

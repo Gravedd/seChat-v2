@@ -72,6 +72,10 @@ export default createStore({
                 localStorage.removeItem('uid');
             state.userstatus = null;
                 localStorage.removeItem('status');
+        },
+        changename(state, newname) {
+            state.username = newname;
+            localStorage.setItem('username', newname);
         }
     },
     actions: {

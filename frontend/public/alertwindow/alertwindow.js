@@ -19,6 +19,9 @@ function showalert(header, text)
     document.getElementById('alerttext').innerHTML = text;
     //Кнопка
     let okbtn = document.getElementById('okbtn');
+    if (header === 'Успешно!' || header === 'Успешно') {
+        okbtn.classList.add('success');
+    }
     okbtn.title = header;
     okbtn.addEventListener('click', closealert);
 }

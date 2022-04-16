@@ -43,92 +43,29 @@ export default {
     },
     methods: {
         /**
-         * Проверить, равно ли какое-либо значение (value)
-         * Значению из vuex store
+         * Проверить, равно ли какое-либо значение (value) Значению из vuex store
+         *
+         * @param value string
+         * @param type string - имя store.getters.[это]
+         * @return boolean
          */
-        checkold(value, param) {
-            return value === store.getters[param];
+        checkold(value, type) {
+            return value === store.getters[type];
         },
 
         /**
-         * Изменить имя пользователя
+         * Изменить информацию пользователя значение имени, почты, стутуса(пароля)
+         *
+         * Метод может изменить имя, почту, статус, (пароль) пользователя.
+         * Сначала проверка, изменены ли данные или отсались как были до.
+         * Затем происходит отправка какого-либо значения на сервер
+         * И в случае положительного ответа сервера, происходит изменение на клиенте
+         *
+         * @param send string - новое значение
+         * @param type string - что будет изменено, не обходимо, чтобы это был getter из store
+         *              Возможные значения: getname, getstatus, getemail
+         * @returns {Promise<void>}
          */
-        /*async changename (){
-            //Если новое имя равно старому то вернуть ошибку
-            if (this.checkold(this.username, 'getname') ) {
-                return showalert('Ошибка', 'Вы не изменили данные');
-            }
-            //Запрос на сервер об изменении имени
-            let response = await fetch(store.getters.apiserver + 'users', {
-                method: 'PATCH',
-                headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
-                    'Authorization' : 'Bearer ' + store.getters.gettoken,
-                },
-                //Указываем что оправляем
-                body: JSON.stringify({
-                    'newname': this.username,
-                })
-            });
-            //Ждем ответа
-            let result = await response.json(); //ответ в json
-            let code = await response.status; //код ответа
-            switch (await code) {
-                case 200: //Успешно
-                    showalert('Успешно!', 'Имя профиля изменено');
-                    store.commit('changename', this.username);
-                    this.username = store.getters.getname;
-                    break;
-                case 422:
-                    showalert('Ошибка!', 'Не корректные данные. Имя должно быть не менее 3 символов и не больше 32');
-                    this.username = store.getters.getname;
-                    break;
-                default: //Другая ошибка
-                    showalert('Ошибка!', 'Ошибка:' + code);
-                    this.username = store.getters.getname;
-                    break;
-            }
-        },*/
-
-        /**
-         * Изменить статус пользователя
-         */
-        /*async changestatus() {
-            //Если статус не равен старому
-            if (this.checkold(this.userStatus, 'getstatus') ) {
-                return showalert('Ошибка', 'Вы не изменили данные');
-            }
-            //Запрос на сервер об изменении имени
-            let response = await fetch(store.getters.apiserver + 'users', {
-                method: 'PATCH',
-                headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
-                    'Authorization' : 'Bearer ' + store.getters.gettoken,
-                },
-                //Указываем что оправляем
-                body: JSON.stringify({
-                    'newstatus': this.userStatus,
-                })
-            });
-            //Ждем ответа
-            let result = await response.json(); //ответ в json
-            let code = await response.status; //код ответа
-            switch (await code) {
-                case 200: //Успешно
-                    showalert('Успешно!', 'Статус изменен');
-                    store.commit('changeStatus', this.userStatus);
-                    this.userStatus = store.getters.getstatus;
-                    break;
-                case 422:
-                    showalert('Ошибка!', 'Не корректные данные. Статус должен быть не менее 3 символов и не больше 256');
-                    this.userStatus = store.getters.getstatus;
-                    break;
-                default: //Другая ошибка
-                    showalert('Ошибка!', 'Ошибка:' + code);
-                    this.userStatus = store.getters.getstatus;
-                    break;
-            }
-        }*/
         async changesomething(send, type) {
             if (this.checkold(send, type)) {
                 return showalert('Ошибка', 'Вы не изменили данные');

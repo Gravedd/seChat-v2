@@ -24,10 +24,9 @@
                     <router-link :to="{ name: 'profile', params: {id: claim.userfriend.id}}">
                         <h3 class="accenttext">{{ claim.userfriend.name }}</h3>
                     </router-link>
-                    <iconbutton image="/icons/interface/addfriend.svg">Подвтердить</iconbutton>
+                    <iconbutton image="/icons/interface/addfriend.svg" @click="approveclaim(claim.userfriend.id)">Подвтердить</iconbutton>
                 </div>
             </div>
-
         </div>
     </section>
 </template>
@@ -42,7 +41,7 @@ export default {
         return {
             friends: {},
             claims: {},
-            showfriends: true,
+            showfriends: false,
             showclaims: false,
         }
     },
@@ -97,8 +96,29 @@ export default {
                     showalert('Ошибка!', 'Ошибка при загрузки списка заявок: ' + code);
                     break;
             }
+        },
+        async approveclaim(id){
+            let response = await fetch(store.getters.apiserver + 'friends/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    showalert('Успешно!', result.message);
+                    this.showclaims = false;
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка при загрузки списка заявок: ' + code);
+                    break;
+            }
         }
-
     },
     async created() {
         await this.getfriends();
@@ -135,6 +155,7 @@ h3 {
 }
 h3.active {
     color: var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
 }
 @media (max-width: 578px) {
     .actions .btn {

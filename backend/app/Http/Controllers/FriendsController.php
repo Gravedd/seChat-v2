@@ -70,4 +70,35 @@ class FriendsController extends Controller
 
         return response()->json($userfriends);
     }
+
+    /**
+     * POST /friends/{friend_id}
+     *
+     * Запрос в друзья пользователю {friend_id} от пользователя с запросом
+     *
+     * @param Request $request
+     * @param $friend_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function friendrequest(Request $request, $friend_id) {
+        $id = $request->user()->id;
+        $friendreq = Friend::Where('user_id', $id)->Where('friend_id', $friend_id)->first();
+        if ($friendreq) {
+            return response()->json(["status"=>false, 'message'=>'Ваш запрос в друзья уже существует']);
+        }
+        $friendreqvv = Friend::Where('user_id', $friend_id)->Where('friend_id', $id)->first();
+        if ($friendreqvv) {
+            $friendreqvv->type = 1;
+            $result = $friendreqvv->save();
+            return response()->json(["status"=> $result, 'message'=>'Запрос в друзья подтвержден']);
+        }
+        $friendrequest = new Friend;
+            $friendrequest->user_id = $id;
+            $friendrequest->friend_id = $friend_id;
+        $result = $friendrequest->save();
+        return response()->json(["status"=> $result, 'message'=>'Запрос в друзья успешно отправлен']);
+    }
+
+
+
 }

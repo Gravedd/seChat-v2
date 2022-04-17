@@ -42,6 +42,9 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::patch('/users/', [\App\Http\Controllers\UsersController::class, 'changeSomething']);
     Route::get('/friends', [\App\Http\Controllers\FriendsController::class, 'friendlistapproved']);
     Route::get('/friends/unproved', [\App\Http\Controllers\FriendsController::class, 'friendlistunproved']);
+
+    /** Запрос в друзья */
+    Route::post('/friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'friendrequest']);
 });
 
 /**

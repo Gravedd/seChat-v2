@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="useractions">
-        <iconbutton image="/icons/interface/addfriend.svg">Добавить в друзья</iconbutton>
+        <iconbutton image="/icons/interface/addfriend.svg" @click="sendfriendrequest">Добавить в друзья</iconbutton>
         <router-link :to="{ name: 'chat', params: {userid: $route.params.id}}">
             <iconbutton image="/icons/interface/new-message.svg">Отправить сообщение</iconbutton>
         </router-link>
@@ -52,6 +52,29 @@ export default {
         }
     },
     props: ['id'],
+    methods: {
+        async sendfriendrequest($friend_id){
+            let response = await fetch(store.getters.apiserver + 'friends/' + this.id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    showalert('Успешно!', result.message);
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка при загрузки списка заявок: ' + code);
+                    break;
+            }
+        }
+    },
     async created() {
         let response = await fetch(store.getters.apiserver + 'users/' + this.id,{
             method: 'GET',

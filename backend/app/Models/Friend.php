@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Friend extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     public function frienduser(){
         return $this->hasOne(User::class, 'id', 'friend_id')->select('users.id', 'users.name');
     }

@@ -3,29 +3,62 @@
         <h1>Мои друзья</h1>
         <hr>
         <div class="friendscontainer">
-            <div class="friendswrapper">
-                <h3 class="name">@nickname</h3>
+
+            <div class="friendswrapper" v-for="friend in friends">
+                <router-link :to="{ name: 'profile', params: {id: friend.frienduser ? friend.frienduser.id : friend.userfriend.id}}">
+                    <h3 class="name">{{ friend.frienduser ? friend.frienduser.name : friend.userfriend.name}}</h3>
+                </router-link>
                 <div class="actions">
-                    <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
-                    <iconbutton image="/icons/interface/remove.svg" class="red">Удалить из друзей</iconbutton>
+                    <router-link to="">
+                        <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
+                    </router-link>
+                    <router-link to="">
+                        <iconbutton image="/icons/interface/remove.svg" class="disabled ">Удалить из друзей</iconbutton>
+                    </router-link>
                 </div>
             </div>
-            <div class="friendswrapper">
-                <h3 class="name">@nickname</h3>
-                <div class="actions">
-                    <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
-                    <iconbutton image="/icons/interface/remove.svg" class="red">Удалить из друзей</iconbutton>
-                </div>
-            </div>
+
         </div>
     </section>
 </template>
 
 <script>
 import Iconbutton from "@/components/iconbutton";
+import store from "@/store";
 export default {
     name: "friends",
-    components: {Iconbutton}
+    components: {Iconbutton},
+    data() {
+        return {
+            friends: {}
+        }
+    },
+    methods: {
+        async getfriends (){
+            let response = await fetch(store.getters.apiserver + 'friends', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    this.friends = result;
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка при загрузки списка друзей: ' + code);
+                    break;
+            }
+        },
+    },
+    async created() {
+        await this.getfriends();
+    },
 }
 </script>
 

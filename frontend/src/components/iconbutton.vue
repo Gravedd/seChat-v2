@@ -42,5 +42,10 @@ img {
     filter: brightness(95%);
     transform: scale(1.03);
 }
-
+.disabled {
+    background-color: var(--gray3);
+}
+.disabled:hover {
+    transform: none;
+}
 </style>

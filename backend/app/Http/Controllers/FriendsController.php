@@ -110,6 +110,7 @@ class FriendsController extends Controller
             $result = $friendentry->delete();
         return response()->json(['status'=> $result, 'message'=> 'Успешно удален из друзей']);
     }
+
     public static function checkIfUserIsFriend($id, $friend_id, $type){
         $friend = Friend::
         Where(function ($query) use ($id, $friend_id){

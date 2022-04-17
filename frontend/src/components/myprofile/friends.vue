@@ -39,12 +39,13 @@ export default {
         return {
             friends: {},
             claims: {},
-            showfriends: false,
+            showfriends: true,
             showclaims: false,
         }
     },
     methods: {
         showfriendslist() {
+            this.getfriends();
             this.showfriends = true;
             this.showclaims = false;
         },
@@ -138,7 +139,7 @@ export default {
                     showalert('Ошибка!', 'Ошибка: ' + code);
                     break;
             }
-        }
+        },
     },
     async created() {
         await this.getfriends();

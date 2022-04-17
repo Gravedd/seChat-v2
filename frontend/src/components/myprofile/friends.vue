@@ -14,9 +14,7 @@
                     <router-link to="">
                         <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
                     </router-link>
-                    <router-link to="">
-                        <iconbutton class="disabled" image="/icons/interface/remove.svg">Удалить из друзей</iconbutton>
-                    </router-link>
+                        <iconbutton image="/icons/interface/remove.svg" @click="deletefriend(friend.frienduser ? friend.frienduser.id : friend.userfriend.id)">Удалить из друзей</iconbutton>
                 </div>
             </div>
             <div class="friendscontainer" v-if="showclaims">
@@ -116,6 +114,28 @@ export default {
                     break;
                 default: //Другая ошибка
                     showalert('Ошибка!', 'Ошибка при загрузки списка заявок: ' + code);
+                    break;
+            }
+        },
+        async deletefriend(id){
+            let response = await fetch(store.getters.apiserver + 'friends/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                }
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    showalert('Успешно!', result.message);
+                    this.showfriends = false;
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка: ' + code);
                     break;
             }
         }

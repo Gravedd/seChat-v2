@@ -43,8 +43,11 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/friends', [\App\Http\Controllers\FriendsController::class, 'friendlistapproved']);
     Route::get('/friends/unproved', [\App\Http\Controllers\FriendsController::class, 'friendlistunproved']);
 
-    /** Запрос в друзья */
+    /** Запрос в друзья(запрос, подтверждение) */
     Route::post('/friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'friendrequest']);
+    /** Удаление из друзей(запрос, подтверждение) */
+    Route::delete('friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'deletefriend']);
+
 });
 
 /**

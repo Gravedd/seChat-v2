@@ -98,7 +98,18 @@ class FriendsController extends Controller
         $result = $friendrequest->save();
         return response()->json(["status"=> $result, 'message'=>'Запрос в друзья успешно отправлен']);
     }
-
+    public function deletefriend(Request $request, $friend_id) {
+        $id = $request->user()->id;
+        $friendentry = Friend::
+            Where(function ($query) use ($id, $friend_id){
+                $query->Where('user_id', $id)->Where('friend_id', $friend_id);
+            })->
+            orWhere(function ($query)  use ($id, $friend_id){
+                $query->Where('user_id', $friend_id)->Where('friend_id', $id);
+            })->first();
+            $result = $friendentry->delete();
+        return response()->json(['status'=> $result, 'message'=> 'Успешно удален из друзей']);
+    }
 
 
 }

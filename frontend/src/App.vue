@@ -107,6 +107,9 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-thumb {
     box-shadow: inset 1px 1px 10px var(--gray2);
 }
+.accenttext {
+    color: var(--accent-color);
+}
 @media (max-width: 1761px) {
     :root {
         --padding: 200px;

@@ -39,9 +39,9 @@ class FriendsController extends Controller
     }
 
     /**
-     * GET /friends/unproved
+     * GET /friends/
      *
-     * Получить информацию о не подтвержденных друзьях пользователя
+     * Получить информацию о подтвержденных друзьях пользователя
      *
      * @param Request $request - пустой
      * @return \Illuminate\Http\JsonResponse
@@ -51,14 +51,23 @@ class FriendsController extends Controller
     }
 
     /**
-     * GET /friends/
+     * GET /friends/unproved
      *
-     * Получить информацию о подтвержденных друзьях пользователя
+     * Получить информацию о взодящих заявках в друзья
      *
      * @param Request $request - пустой
      * @return \Illuminate\Http\JsonResponse
      */
     public function friendlistunproved(Request $request) {
-        return response()->json($this->getfriends($request->user()->id, 0));
+        $userfriends = Friend::
+        //Выбрать где айди пользователя равен айди авторизированого пользователя наоборот
+        Where('friend_id', $request->user()->id)
+            //Выбрать тип ( 0 - не подтверждено, 1 - подтверждено )
+            ->Where('friends.type', 0)
+            //С получением информации и друге
+            ->with('userfriend')
+            ->get();
+
+        return response()->json($userfriends);
     }
 }

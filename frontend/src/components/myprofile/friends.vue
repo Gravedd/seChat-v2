@@ -1,10 +1,12 @@
 <template>
     <section class="friends module">
-        <h1>Мои друзья</h1>
+        <div class="btnwrapper">
+            <h3 :class="{active: showfriends}" @click="showfriendslist">Мои друзья</h3>
+            <h3 :class="{active: showclaims}" @click="showclaimslist">Заявки</h3>
+        </div>
         <hr>
         <div class="friendscontainer">
-
-            <div class="friendswrapper" v-for="friend in friends">
+            <div class="friendswrapper" v-for="friend in friends" v-if="showfriends">
                 <router-link :to="{ name: 'profile', params: {id: friend.frienduser ? friend.frienduser.id : friend.userfriend.id}}">
                     <h3 class="name">{{ friend.frienduser ? friend.frienduser.name : friend.userfriend.name}}</h3>
                 </router-link>
@@ -13,8 +15,16 @@
                         <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
                     </router-link>
                     <router-link to="">
-                        <iconbutton image="/icons/interface/remove.svg" class="disabled ">Удалить из друзей</iconbutton>
+                        <iconbutton class="disabled" image="/icons/interface/remove.svg">Удалить из друзей</iconbutton>
                     </router-link>
+                </div>
+            </div>
+            <div class="friendscontainer" v-if="showclaims">
+                <div class="friendswrapper" v-for="claim in claims">
+                    <router-link :to="{ name: 'profile', params: {id: claim.userfriend.id}}">
+                        <h3 class="accenttext">{{ claim.userfriend.name }}</h3>
+                    </router-link>
+                    <iconbutton image="/icons/interface/addfriend.svg">Подвтердить</iconbutton>
                 </div>
             </div>
 
@@ -30,10 +40,22 @@ export default {
     components: {Iconbutton},
     data() {
         return {
-            friends: {}
+            friends: {},
+            claims: {},
+            showfriends: true,
+            showclaims: false,
         }
     },
     methods: {
+        showfriendslist() {
+            this.showfriends = true;
+            this.showclaims = false;
+        },
+        async showclaimslist() {
+            this.showfriends = false;
+            this.showclaims = true;
+            await this.getclaims();
+        },
         async getfriends (){
             let response = await fetch(store.getters.apiserver + 'friends', {
                 method: 'GET',
@@ -55,6 +77,28 @@ export default {
                     break;
             }
         },
+        async getclaims() {
+            let response = await fetch(store.getters.apiserver + 'friends/unproved', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    this.claims = result;
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка при загрузки списка заявок: ' + code);
+                    break;
+            }
+        }
+
     },
     async created() {
         await this.getfriends();
@@ -81,6 +125,16 @@ h3 {
 }
 .actions {
     padding: 8px 0px;
+}
+.btnwrapper {
+    display: flex;
+}
+.btnwrapper h3 {
+    margin-right: 16px;
+    color: var(--black-color);
+}
+h3.active {
+    color: var(--accent-color);
 }
 @media (max-width: 578px) {
     .actions .btn {

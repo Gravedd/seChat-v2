@@ -35,12 +35,17 @@ class UsersController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * Return user info
      */
-    public function getUser ($userid) {
+    public function getUser (Request $request,$userid) {
         $user = User::Select('id', 'name', 'status', 'created_at', 'updated_at')->find($userid);
         if (!isset($user)) {
             return response()->json($user, 404);
         }
-        return response()->json($user);
+        if (FriendsController::checkIfUserIsFriend($request->user()->id, $userid, 1)) {
+            $isfriend = true;
+        } else {
+            $isfriend = false;
+        }
+        return response()->json([$user, 'isfriend' => FriendsController::checkIfUserIsFriend($request->user()->id, $userid, 1)]);
     }
 
 
@@ -73,34 +78,4 @@ class UsersController extends Controller
         $result = $user->save(); // if success returns true
         return response()->json(['status' => $result]);
     }
-
-//    /**
-//     * called from a method "changeSomething"
-//     * change user name
-//     * @param $request
-//     * @return \Illuminate\Http\JsonResponse
-//     * return status
-//     */
-//    public function changeName($request) {
-//        //new name validation
-//        $fields = $request->validate([
-//            'newname' => 'required|string|max:32|min:3',
-//        ]);
-//        $user = $request->user(); //get logged user
-//        $user->name = $request->newname; //change name
-//        $result = $user->save(); // if success returns true
-//        return response()->json(['status'=> $result]);
-//    }
-//
-//    public function changeStatus($request) {
-//        $fields = $request->validate([
-//            'newstatus' => 'required|string|max:256|min:3',
-//        ]);
-//        $user = $request->user();
-//        $user->status = $request->newstatus; //change status
-//        $result = $user->save();
-//        return response()->json(['status'=> $result]);
-//    }
-
-
 }

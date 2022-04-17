@@ -14,7 +14,13 @@
         </div>
     </div>
     <div class="useractions">
-        <iconbutton image="/icons/interface/addfriend.svg" @click="sendfriendrequest">Добавить в друзья</iconbutton>
+        <iconbutton image="/icons/interface/addfriend.svg" @click="sendfriendrequest" v-if="userfriend === false">Добавить в друзья</iconbutton>
+        <iconbutton image="/icons/interface/addfriend.svg"
+                    v-if="userfriend === 1"
+        >Ваш друг</iconbutton>
+        <iconbutton image="/icons/interface/addfriend.svg"
+                    v-if="userfriend === 0"
+        >Заявка отправлена</iconbutton>
         <router-link :to="{ name: 'chat', params: {userid: $route.params.id}}">
             <iconbutton image="/icons/interface/new-message.svg">Отправить сообщение</iconbutton>
         </router-link>
@@ -48,7 +54,7 @@ export default {
             userstatus: '',
             userdate: '',
             userupdate: '',
-
+            userfriend: false,
         }
     },
     props: ['id'],
@@ -89,10 +95,11 @@ export default {
         let code = await response.status; //код ответа
         switch (await code) {
             case 200:
-                this.username = result.name;
-                this.userstatus = result.status;
-                this.userdate = result.created_at;
-                this.userupdate= result.updated_at;
+                this.username = result[0].name;
+                this.userstatus = result[0].status;
+                this.userdate = result[0].created_at;
+                this.userupdate= result[0].updated_at;
+                this.userfriend = result.isfriend;
                 break;
             case 404:
                 showalert('Ошибка 404', 'Такого пользователя не существует');

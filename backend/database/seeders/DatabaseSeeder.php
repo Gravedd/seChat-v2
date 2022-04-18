@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +15,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        for ($i=0; $i < 100000; $i++) {
+            \App\Models\Message::create([
+                'sender_id' => mt_rand(1, 8),
+                'receiver_id' => mt_rand(1, 8),
+                'message' => Str::random(40),
+                'readed' => false,
+            ]);
+        }
     }
 }

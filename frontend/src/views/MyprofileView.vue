@@ -45,7 +45,7 @@ export default {
     data() {
         return {
             showsettings: false,
-            showfriends: true,
+            showfriends: false,
         }
     },
     props: {

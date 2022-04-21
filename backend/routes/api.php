@@ -48,6 +48,10 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     /** Удаление из друзей(запрос, подтверждение) */
     Route::delete('friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'deletefriend']);
 
+
+    /** СООБЩЕНИЯ */
+    Route::get('/dialogues/{friend_id}', [\App\Http\Controllers\MessagesController::class, 'getUserMessagesInDialog']);
+
 });
 
 /**

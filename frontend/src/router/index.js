@@ -59,6 +59,7 @@ const routes = [
     path: '/dialogues/:userid',
     name: 'chat',
     meta: { title: 'Диалог' },
+    props: true,
     beforeEnter: ifAuthenticated,
     component: () => import('../views/ChatView.vue')
   },

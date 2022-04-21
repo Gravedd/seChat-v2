@@ -13,21 +13,12 @@
                         <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true"></iconbutton>
                     </div>
                 </div>
-                <div class="chatcontainer">
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
-                    <div class="messwrapper sent"><div class="message">Сообщение</div><div class="time">31 марта 14:03</div></div>
+                <div class="chatcontainer" id="msgwrapper" v-on:scroll="scrollmess">
+                    <div class="messwrapper" v-for="message in messages" :class="{'sent': message.sender_id === $store.getters.getuid }" :title="message.id">
+                        <div class="message">{{ message.message }}</div>
+                        <div class="time">{{ message.created_at }}</div>
+                    </div>
+                    <div style="text-align: center;" v-if="!messages[0]"><b>Cообщений нет</b></div>
                 </div>
                 <div class="chatinputwrapper">
                     <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off">
@@ -42,9 +33,78 @@
 <script>
 import Iconbutton from "@/components/iconbutton";
 import IndexView from "@/views/IndexView";
+import store from "@/store";
 export default {
     name: "DialoguesView",
     components: {IndexView, Iconbutton},
+    data() {
+        return {
+            currentpagenum: 0,
+            lastpage: 2,
+            messages: [],
+        }
+    },
+    store: store,
+    props: ['userid'],
+    methods: {
+        async getmessages() {
+            if (this.currentpagenum <= this.lastpage) {
+                this.currentpagenum ++;
+                //Запрос на серврер получение сообщений с пользователем (по 30 шт) и номер страницы(пагинация)
+                let response = await fetch(store.getters.apiserver + 'dialogues/' + this.userid + '?page=' + this.currentpagenum, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=utf-8',
+                        'Access-Control-Allow-Origin': '<origin>',
+                        'Authorization': 'Bearer ' + store.getters.gettoken,
+                    },
+                });
+                let result = await response.json(); //ответ в json
+                let code = await response.status; //код ответа
+                switch (await code) {
+                    //Успешно
+                    case 200:
+                        this.lastpage = result.last_page;//устанавливаем значение последней страницы
+                        result.data.entries(result.data);//конвертация в массив
+
+                        //Сохраняем сообщения в массив
+                        if (this.messages.length > 0) {//проверка, были ли получены сообщения или нет
+                            //запись в массив сообщений
+                            for (let message in result.data) {
+                                this.messages.unshift(result.data[message]);
+                            }
+                        } else {
+                            //первичное добавление сообщений
+                            this.messages = this.messages.concat(result.data.reverse());
+                            //Изменяем положение scroll у блока
+                            setTimeout(this.scrolldown, 200);
+                            setTimeout(this.scrollevent, 200);
+                        }
+                        this.currentpagenum = result.current_page;//следующий запрос - следущая страница
+                        break;
+                    //Ошибка
+                    default:
+                        showalert('Ошибка!', 'Ошибка при загрузки сообщений: ' + code);
+                        break;
+                }
+            } else {
+                showalert('Успешно', 'Достигнут конец диалога');
+            }
+        },
+        async scrolldown() {
+            let msgwrapper = document.getElementById('msgwrapper');
+            msgwrapper.scrollTop = msgwrapper.scrollHeight;
+        },
+        scrollmess(event) {
+            if (event.srcElement.scrollTop === 0) {
+                this.getmessages();
+            }
+        },
+    },
+    async created() {
+        await this.getmessages();
+    }
 }
 </script>
 
@@ -90,6 +150,7 @@ export default {
     padding: 16px;
     font-family: "LightFont";
     overflow-y: scroll;
+    overflow-x: hidden;
     border-top: 2px solid var(--main-color);
     border-bottom: 2px solid var(--main-color);
 }

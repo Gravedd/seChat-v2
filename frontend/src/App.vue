@@ -20,8 +20,8 @@ export default {
     },
     created() {
         store.dispatch('CHECKLOGIN');
-        console.log('ок');
-    }
+        store.dispatch('connectws');
+    },
 }
 </script>
 <style>

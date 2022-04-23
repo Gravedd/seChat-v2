@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import router from "@/router";
+import ws from "@/store/ws";
 export default createStore({
     //Состояния
     state: {
@@ -224,5 +225,6 @@ export default createStore({
 
     },
     modules: {
+        ws
     }
 })

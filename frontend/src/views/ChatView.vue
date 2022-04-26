@@ -14,11 +14,11 @@
                     </div>
                 </div>
                 <div class="chatcontainer" id="msgwrapper" v-on:scroll="scrollmess">
-                    <div class="messwrapper" v-for="message in messages" :class="{'sent': message.sender_id === $store.getters.getuid }" :title="message.id">
+                    <div v-if="messages" class="messwrapper" v-for="message in messages['dialog' + userid]" :class="{'sent': message.sender_id === $store.getters.getuid }" :title="message.id">
                         <div class="message">{{ message.message }}</div>
                         <div class="time">{{ message.created_at }}</div>
                     </div>
-                    <div style="text-align: center;" v-if="!messages[0]"><b>Cообщений нет</b></div>
+                    <div style="text-align: center;" v-if="!messages['dialog' + userid]"><b>Cообщений нет</b></div>
                 </div>
                 <div class="chatinputwrapper">
                     <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off">
@@ -41,14 +41,25 @@ export default {
         return {
             currentpagenum: 0,
             lastpage: 2,
-            messages: [],
+            messages: store.getters.getMessagess
         }
     },
     store: store,
     props: ['userid'],
     methods: {
         async getmessages() {
+            await store.dispatch('requestForMessages', this.userid);
+            setTimeout(this.scrolldown, 200);
+        },
+        scrolldown() {
+            let msgwrapper = document.getElementById('msgwrapper');
+            console.log(msgwrapper.scrollTop);
+            console.log(msgwrapper.scrollHeight);
+            msgwrapper.scrollTop = msgwrapper.scrollHeight;
+        },
+        /*async getmessages() {
             if (this.currentpagenum <= this.lastpage) {
+                store.dispatch('requestForMessages', this.userid);
                 this.currentpagenum ++;
                 //Запрос на серврер получение сообщений с пользователем (по 30 шт) и номер страницы(пагинация)
                 let response = await fetch(store.getters.apiserver + 'dialogues/' + this.userid + '?page=' + this.currentpagenum, {
@@ -92,15 +103,11 @@ export default {
                 showalert('Успешно', 'Достигнут конец диалога');
             }
         },
-        async scrolldown() {
-            let msgwrapper = document.getElementById('msgwrapper');
-            msgwrapper.scrollTop = msgwrapper.scrollHeight;
-        },
         scrollmess(event) {
             if (event.srcElement.scrollTop === 0) {
                 this.getmessages();
             }
-        },
+        },*/
     },
     async created() {
         await this.getmessages();

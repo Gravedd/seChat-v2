@@ -17,4 +17,13 @@ class MessagesController extends Controller
         })->orderby('id', 'DESC')->paginate(30);
         return response()->json($messages);
     }
+    public static function getUserMessagesInDialogWS($uid, $user_id) {
+        $messages = Message::Where(function ($query) use ($uid, $user_id)
+        {
+            $query->Where('sender_id', $uid)->Where('receiver_id', $user_id);
+        })->orWhere(function ($query) use ($uid, $user_id){
+            $query->Where('sender_id', $user_id)->Where('receiver_id', $uid);
+        })->orderby('id', 'DESC')->get();
+        return $messages;
+    }
 }

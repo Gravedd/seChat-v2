@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import router from "@/router";
 import ws from "@/store/ws";
+import ChatWS from "@/store/ChatWS";
+
 export default createStore({
     //Состояния
     state: {

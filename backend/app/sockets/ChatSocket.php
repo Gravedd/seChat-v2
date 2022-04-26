@@ -2,6 +2,7 @@
 namespace App\sockets;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MessagesController;
 use App\Models\SocketUser;
 use App\sockets\base\baseSocket;
 use Psy\Util\Json;
@@ -29,7 +30,7 @@ class ChatSocket extends baseSocket {
 
     //Сообщение
     public function onMessage(ConnectionInterface $from, $msg) {
-//        echo $from->resourceId . ' : ' . $msg;
+        echo $from->resourceId . ' : ' . $msg;
         $msg = json_decode($msg, true);
 
         //Определяем тип сообщения
@@ -37,6 +38,11 @@ class ChatSocket extends baseSocket {
             //Если тип - авторизация
             case 'auth':
                 $this->Authorization($from, $msg['token']);
+                break;
+            case 'getmessages':
+                $messages = MessagesController::getUserMessagesInDialogWS($this->clients[$from->resourceId]->id, $msg['userid']);
+                $this->clients[$from->resourceId]->send(json_encode(['type'=>'getmessages', 'user_id' => $msg['userid'], 'messages'=>$messages]));
+
                 break;
             default:
                 $from->send(json_encode(['message'=> 'не корректный тип сообщения']));
@@ -47,7 +53,9 @@ class ChatSocket extends baseSocket {
     //Закрытие сокета
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
-        $this->removeUserInDB($conn->resourceId);
+        if (isset($this->clients[$conn->resourceId]->auth)) {
+            $this->removeUserInDB($conn->resourceId);
+        }
         unset($this->clients[$conn->resourceId]);
         echo "Пользователь ({$conn->resourceId}) отключился\n";
     }
@@ -63,7 +71,7 @@ class ChatSocket extends baseSocket {
     /** МЕТОДЫ АВТОРИЗАЦИИ */
 
     protected function sendAuthRequest($user){
-        $text = json_encode(['message'=>'sendauthtoken']);
+        $text = json_encode(['type'=>'sendauthtoken']);
         $user->send($text);
     }
     protected function Authorization($requser, $token){
@@ -101,7 +109,9 @@ class ChatSocket extends baseSocket {
     }
     protected function removeUserInDB($resid){
         $socketUser = SocketUser::Where('resource_id', $resid)->first();
-        $socketUser->delete();
+        if (isset($socketUser)) {
+            $socketUser->delete();
+        }
     }
     /** КОНЕЦ МЕТОДЫ АВТОРИЗАЦИИ */
 }

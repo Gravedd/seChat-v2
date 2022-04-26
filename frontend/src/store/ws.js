@@ -26,8 +26,8 @@ export default {
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);
                 if (response.message === "sendauthtoken") {
-                    let token = context.getters.gettoken;
-                    context.state.websocket.send(token);
+                    let token = {'token': context.getters.gettoken, 'type': 'auth'};
+                    context.state.websocket.send(JSON.stringify(token));
                 }
 
             }

@@ -16,6 +16,7 @@ class CreateSocketusersTable extends Migration
         Schema::create('socketUsers', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id');
+            $table->bigInteger('resource_id');
             $table->timestamps();
         });
     }

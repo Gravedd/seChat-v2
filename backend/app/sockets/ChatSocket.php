@@ -1,7 +1,10 @@
 <?php
 namespace App\sockets;
 
+use App\Http\Controllers\AuthController;
+use App\Models\SocketUser;
 use App\sockets\base\baseSocket;
+use Psy\Util\Json;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -12,30 +15,41 @@ class ChatSocket extends baseSocket {
 
     public function __construct() {
         $this->clients = [];
+        SocketUser::truncate();//Сброс бд
         echo "Сервер успешно запущен!\n";
     }
-
-
-
 
     //Открытие сокета
     public function onOpen(ConnectionInterface $conn) {
         $this->clients[$conn->resourceId] = $conn;
-        echo " Новое подключение: ({$conn->resourceId})\n";
-        $authtext = json_encode(['message'=>'sendauthtoken']);
-        //Авторизация
-        $conn->send($authtext);
+        $this->clients[$conn->resourceId]->auth = false;
+        echo " Новое подключение: ($conn->resourceId)\n";
+        $this->sendAuthRequest($conn);
     }
 
     //Сообщение
     public function onMessage(ConnectionInterface $from, $msg) {
-        echo $from->resourceId . ' : ' . $msg;
+//        echo $from->resourceId . ' : ' . $msg;
+        $msg = json_decode($msg, true);
+
+        //Определяем тип сообщения
+        switch ($msg['type']) {
+            //Если тип - авторизация
+            case 'auth':
+                $this->Authorization($from, $msg['token']);
+                break;
+            default:
+                $from->send(json_encode(['message'=> 'не корректный тип сообщения']));
+                break;
+        }
+
     }
     //Закрытие сокета
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
+        $this->removeUserInDB($conn->resourceId);
         unset($this->clients[$conn->resourceId]);
-        echo "Connection {$conn->resourceId} has disconnected\n";
+        echo "Пользователь ({$conn->resourceId}) отключился\n";
     }
 
     //Ошибка
@@ -43,4 +57,51 @@ class ChatSocket extends baseSocket {
         echo "An error has occurred: {$e->getMessage()}\n";
         $conn->close();
     }
+
+
+
+    /** МЕТОДЫ АВТОРИЗАЦИИ */
+
+    protected function sendAuthRequest($user){
+        $text = json_encode(['message'=>'sendauthtoken']);
+        $user->send($text);
+    }
+    protected function Authorization($requser, $token){
+        //Получаем объект пользователя по токену
+        $user = $this->AuthorizationCheckToken($token);
+        if (isset($user)) {
+            //Добавляем инф в БД
+            $this->successAuthenticated($user->id, $requser->resourceId);
+            //Записываем, что пользователь авторизован
+            $this->clients[$requser->resourceId]->auth = true;
+            $this->clients[$requser->resourceId]->id = $user->id;
+            echo "Пользователь $user->name ($requser->resourceId) c айди $user->id успешно авторизован\n";
+        } else {
+            $requser->send(json_encode(['message'=> 'Не верный токен']));
+        }
+    }
+    protected function AuthorizationCheckToken($token){
+        //Проверка, есть ли пользователь с таким токеном
+        $usertoken = AuthController::checkWsAuth($token);
+            if (!isset($usertoken)) {
+                return false;
+            }
+        //Получаем объект пользователя
+        $user = $usertoken->tokenable;
+            if (!isset($user)) {
+                return false;
+            }
+        return $user;
+    }
+    protected function successAuthenticated($uid, $resid) {
+        $socketUser = new SocketUser;
+            $socketUser->user_id = $uid;
+            $socketUser->resource_id = $resid;
+        $socketUser->save();
+    }
+    protected function removeUserInDB($resid){
+        $socketUser = SocketUser::Where('resource_id', $resid)->first();
+        $socketUser->delete();
+    }
+    /** КОНЕЦ МЕТОДЫ АВТОРИЗАЦИИ */
 }

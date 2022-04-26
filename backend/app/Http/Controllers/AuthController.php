@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -107,6 +108,10 @@ class AuthController extends Controller
      */
     public function checkauth(Request $request) {
         return response()->json($request->user());
+    }
+
+    public static function checkWsAuth($token) {
+        return PersonalAccessToken::findToken($token);
     }
 
 }

@@ -4,9 +4,8 @@ export default {
         messages: {},
     },
     getters: {
-        getMessagess: (state) => {
-            return state.messages;
-        }
+        getMessagess: (state) => state.messages,
+
     },
     mutations: {
         storeMessages: (state, value) => {
@@ -43,7 +42,11 @@ export default {
         },
         async newMessage(context, data) {
             context.commit('addReceivedMessage', data);
-        }
-
+            setTimeout(scrolldown, 100);
+            function scrolldown() {
+                let msgwrapper = document.getElementById('msgwrapper');
+                msgwrapper.scrollTop = msgwrapper.scrollHeight;
+            }
+        },
     }
 }

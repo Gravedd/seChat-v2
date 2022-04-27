@@ -34,20 +34,31 @@
 import Iconbutton from "@/components/iconbutton";
 import IndexView from "@/views/IndexView";
 import store from "@/store";
-import mapState from 'vuex';
+import { mapState } from 'vuex'
 export default {
     components: {IndexView, Iconbutton},
     data() {
         return {
-            messages: store.getters.getMessagess,
+/*            messages: store.getters.getMessagess,*/
             inputmessage: '',
+            dialogkey: 'dialog' + this.userid,
         }
+    },
+    computed: {
+        messages() {
+            return store.getters.getMessagess;
+        },
+
+
+        /*messagesupdates() {
+             return this.messages[this.dialogkey].length;
+        }*/
     },
     store: store,
     props: ['userid'],
     methods: {
         async getmessages() {
-            await store.dispatch('requestForMessages', this.userid);
+            store.dispatch('requestForMessages', this.userid);
             setTimeout(this.scrolldown, 200);
         },
         scrolldown() {
@@ -124,15 +135,6 @@ export default {
     async created() {
         await this.getmessages();
     },
-    mounted () {
-        this.$store.watch(
-            (state, getters) => state.messages,
-            (newValue, oldValue) => {
-                console.log(newValue);
-                console.log('daspdpasdasd')
-            }
-        )
-    }
 }
 </script>
 

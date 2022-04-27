@@ -21,8 +21,8 @@
                     <div style="text-align: center;" v-if="!messages['dialog' + userid]"><b>Cообщений нет</b></div>
                 </div>
                 <div class="chatinputwrapper">
-                    <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off">
-                    <iconbutton image="/icons/interface/send.svg" title="Отправить сообщение" nopadding="true" class="sendbtn"></iconbutton>
+                    <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off" v-model="inputmessage">
+                    <iconbutton image="/icons/interface/send.svg" title="Отправить сообщение" nopadding="true" class="sendbtn" @click="sendMessage"></iconbutton>
                 </div>
             </div>
         </div>
@@ -34,14 +34,13 @@
 import Iconbutton from "@/components/iconbutton";
 import IndexView from "@/views/IndexView";
 import store from "@/store";
+import mapState from 'vuex';
 export default {
-    name: "DialoguesView",
     components: {IndexView, Iconbutton},
     data() {
         return {
-            currentpagenum: 0,
-            lastpage: 2,
-            messages: store.getters.getMessagess
+            messages: store.getters.getMessagess,
+            inputmessage: '',
         }
     },
     store: store,
@@ -53,10 +52,23 @@ export default {
         },
         scrolldown() {
             let msgwrapper = document.getElementById('msgwrapper');
-            console.log(msgwrapper.scrollTop);
-            console.log(msgwrapper.scrollHeight);
             msgwrapper.scrollTop = msgwrapper.scrollHeight;
         },
+        async sendMessage() {
+            store.dispatch('sendMessage', {'user_id' : this.userid, 'messagetext': this.inputmessage});
+            let data = {
+                id: 1,
+                receiver_id: this.userid,
+                sender_id: store.getters.getuid,
+                message: this.inputmessage,
+                readed: 0,
+                created_at: "2022-04-02T20:44:31.000000Z",
+                updated_at: "2022-04-02T20:44:31.000000Z",
+            }
+            store.commit('addMessage', data);
+            this.inputmessage = '';
+            setTimeout(this.scrolldown, 80);
+        }
         /*async getmessages() {
             if (this.currentpagenum <= this.lastpage) {
                 store.dispatch('requestForMessages', this.userid);
@@ -111,6 +123,15 @@ export default {
     },
     async created() {
         await this.getmessages();
+    },
+    mounted () {
+        this.$store.watch(
+            (state, getters) => state.messages,
+            (newValue, oldValue) => {
+                console.log(newValue);
+                console.log('daspdpasdasd')
+            }
+        )
     }
 }
 </script>

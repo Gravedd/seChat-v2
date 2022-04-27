@@ -11,6 +11,14 @@ export default {
     mutations: {
         storeMessages: (state, value) => {
             state.messages['dialog' + value.user_id] = value.messages;
+        },
+        addMessage: (state, data) => {
+            let key = 'dialog' + data.receiver_id;
+            state.messages[key].push(data);
+        },
+        addReceivedMessage: (state, data) => {
+            let key = 'dialog' + data.sender_id;
+            state.messages[key].push(data);
         }
     },
     actions: {
@@ -22,12 +30,20 @@ export default {
             store.state.ws.websocket.send(JSON.stringify(jsonSend));
         },
         async reciveMessages(context, request) {
-            console.log(request.messages.reverse());
+            request.messages.reverse();
             this.commit('storeMessages', request);
         },
-        getMessagessInDialog(context, id){
-            console.log(context)
-            return context.state.messages['dialog' + id];
+        async sendMessage(context, data) {
+            let send = JSON.stringify({
+                'type': 'message',
+                'to': data.user_id,
+                'messagetext': data.messagetext,
+            });
+            store.state.ws.websocket.send(send);
+        },
+        async newMessage(context, data) {
+            context.commit('addReceivedMessage', data);
         }
+
     }
 }

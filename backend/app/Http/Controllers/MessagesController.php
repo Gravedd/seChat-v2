@@ -26,4 +26,13 @@ class MessagesController extends Controller
         })->orderby('id', 'DESC')->get();
         return $messages;
     }
+
+    public static function SaveMessageInDB($sender_id, $receiver_id, $msg) {
+        $message = new Message();
+            $message->sender_id = $sender_id;
+            $message->receiver_id = $receiver_id;
+            $message->message = $msg;
+        return $message->save();
+    }
+
 }

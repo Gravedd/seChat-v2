@@ -25,16 +25,15 @@ export default {
             }
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);
-                // if (response.message === "sendauthtoken") {
-                //     let token = {'token': context.getters.gettoken, 'type': 'auth'};
-                //     context.state.websocket.send(JSON.stringify(token));
-                // }
                 switch (response.type) {
                     case 'sendauthtoken':
                         context.dispatch('sendtoken');
                         break;
                     case 'getmessages':
                         context.dispatch('reciveMessages', {'user_id': response.user_id, 'messages': response.messages})
+                        break;
+                    case 'newmessage':
+                        context.dispatch('newMessage', response);
                         break;
                     default:
                         console.log('полученно сообщение');

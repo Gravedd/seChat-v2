@@ -42,7 +42,9 @@ class ChatSocket extends baseSocket {
             case 'getmessages':
                 $messages = MessagesController::getUserMessagesInDialogWS($this->clients[$from->resourceId]->id, $msg['userid']);
                 $this->clients[$from->resourceId]->send(json_encode(['type'=>'getmessages', 'user_id' => $msg['userid'], 'messages'=>$messages]));
-
+                break;
+            case 'message':
+                $this->sendMessagesToUser($this->clients[$from->resourceId]->id, $msg['to'], $msg['messagetext']);
                 break;
             default:
                 $from->send(json_encode(['message'=> 'не корректный тип сообщения']));
@@ -66,6 +68,33 @@ class ChatSocket extends baseSocket {
         $conn->close();
     }
 
+    /** Методы отправки сообщений */
+
+    protected function sendMessagesToUser ($uid, $receiver_id, $message) {
+        $jsontosend = json_encode([
+            'type' => 'newmessage',
+            'sender_id' => $uid,
+            'receiver_id' => $receiver_id,
+            'message' => $message,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s"),
+            'readed' => 0,
+            'id' => '1',
+        ]);
+        foreach ($this->clients as $client) {
+            if ($client->id == $receiver_id) {
+                $client->send($jsontosend);
+            }
+        }
+        if (!MessagesController::SaveMessageInDB($uid, $receiver_id, $message)) {
+            $log = date('Y-m-d H:i:s').'->'."Сообщение от $uid для $receiver_id ($message) не было сохранно в БД";
+            file_put_contents(app_path() . '/logs/log.txt', $log . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    protected function sendMessagesToUserWithoutSender () {
+
+    }
 
 
     /** МЕТОДЫ АВТОРИЗАЦИИ */

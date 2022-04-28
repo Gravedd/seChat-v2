@@ -27,12 +27,15 @@ export default {
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);
                 switch (response.type) {
+
                     case 'sendauthtoken':
                         context.dispatch('sendtoken');
                         break;
+
                     case 'getmessages':
                         context.dispatch('reciveMessages', {'user_id': response.user_id, 'messages': response.messages})
                         break;
+
                     case 'newmessage':
                         if (router.currentRoute._value.name !== 'chat') {
                             let from = 'От пользователя с айди: ' + response.sender_id;
@@ -41,6 +44,7 @@ export default {
                             context.dispatch('newMessage', response);
                         }
                         break;
+
                     default:
                         console.log('полученно сообщение');
                         console.log(response);

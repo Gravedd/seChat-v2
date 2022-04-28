@@ -28,11 +28,37 @@
 <script>
 import Iconbutton from "@/components/iconbutton";
 import IndexView from "@/views/IndexView";
+import store from "@/store";
 export default {
     name: "DialoguesView",
     components: {IndexView, Iconbutton},
+    methods: {
+        async getDialogues(){
+            let response = await fetch(store.getters.apiserver + 'dialogues', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '<origin>',
+                    'Authorization': 'Bearer ' + store.getters.gettoken,
+                },
+            });
+            let result = await response.json(); //ответ в json
+            let code = await response.status; //код ответа
+            switch (await code) {
+                case 200: //Успешно
+                    console.log(result);
+                    break;
+                default: //Другая ошибка
+                    showalert('Ошибка!', 'Ошибка при загрузки списка диалогов: ' + code);
+                    console.log(result);
+                    break;
+            }
+        }
+    },
     created() {
-        //
+        this.getDialogues();
+
     }
 }
 </script>

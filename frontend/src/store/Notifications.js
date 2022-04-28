@@ -1,13 +1,7 @@
 import store from '@/store';
 export default {
     state: {
-        notifications: [
-            {headertext: 'Уведомление 1', contenttext: 'текст уведомления'},
-            {headertext: 'Уведомление 2', contenttext: 'текст уведомления'},
-            {headertext: 'Уведомление 3', contenttext: 'текст уведомления'},
-            {headertext: 'Уведомление 4', contenttext: 'текст уведомления'},
-            {headertext: 'Уведомление 5', contenttext: 'текст уведомления'},
-        ]
+        notifications: []
     },
     getters: {
         getNotifications: (state) => state.notifications

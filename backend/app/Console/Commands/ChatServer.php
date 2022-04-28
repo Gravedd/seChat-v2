@@ -17,14 +17,14 @@ class ChatServer extends Command
      *
      * @var string
      */
-    protected $signature = 'chatserver:serve';
+    protected $signature = 'sockets:serve';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'chatserver:serve - запуск сервера';
+    protected $description = 'sockets:serve - запуск сервера';
 
     /**
      * Create a new command instance.

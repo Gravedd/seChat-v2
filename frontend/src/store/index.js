@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import router from "@/router";
 import ws from "@/store/ws";
-import ChatWS from "@/store/ChatWS";
+import Notifications from "@/store/Notifications";
 
 export default createStore({
     //Состояния
@@ -227,6 +227,6 @@ export default createStore({
 
     },
     modules: {
-        ws
+        ws, Notifications
     }
 })

@@ -1,16 +1,20 @@
 <template>
     <theheader></theheader>
     <router-view/>
+    <notification-contrainer></notification-contrainer>
 </template>
 <script>
 import theheader from "@/components/theheader";
-import thefooter from "@/components/thefooter";
 import '/public/alertwindow/alertwindow.css';
 import store from '@/store';
+import PopupNotification from "@/components/popupNotification";
+import NotificationContrainer from "@/components/notificationContrainer";
 
 export default {
     store: store,
     components: {
+        NotificationContrainer,
+        PopupNotification,
         theheader
     },
     data() {

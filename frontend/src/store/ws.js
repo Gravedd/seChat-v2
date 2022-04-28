@@ -1,4 +1,5 @@
 import ChatWS from "@/store/ChatWS";
+import router from "@/router";
 export default {
     state: {
         websocketsurl: 'ws://sechat.loc:6001',
@@ -33,7 +34,12 @@ export default {
                         context.dispatch('reciveMessages', {'user_id': response.user_id, 'messages': response.messages})
                         break;
                     case 'newmessage':
-                        context.dispatch('newMessage', response);
+                        if (router.currentRoute._value.name !== 'chat') {
+                            let from = 'От пользователя с айди: ' + response.sender_id;
+                            context.commit('addNotification', {'headertext': 'Новое сообщение', 'contenttext': from})
+                        } else {
+                            context.dispatch('newMessage', response);
+                        }
                         break;
                     default:
                         console.log('полученно сообщение');

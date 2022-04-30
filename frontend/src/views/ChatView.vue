@@ -4,7 +4,7 @@
         <div class="rightpanel module">
             <div class="chatwrapper">
                 <div class="chatheader">
-                    <h2 class="chatheaderh2"><router-link to="/dialogues/"><iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"/></router-link>@nickname</h2>
+                    <h2 class="chatheaderh2"><router-link to="/dialogues/"><iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"/></router-link>{{ name }}</h2>
                     <input type="text" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
                     <div class="keywrapper">
                         <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
@@ -34,7 +34,6 @@
 import Iconbutton from "@/components/iconbutton";
 import IndexView from "@/views/IndexView";
 import store from "@/store";
-import { mapState } from 'vuex'
 export default {
     components: {IndexView, Iconbutton},
     data() {
@@ -48,11 +47,10 @@ export default {
         messages() {
             return store.getters.getMessagess;
         },
-
-
-        /*messagesupdates() {
-             return this.messages[this.dialogkey].length;
-        }*/
+        name() {
+            let savedinfo = JSON.parse(sessionStorage.getItem('user' + this.userid));
+            return savedinfo ? savedinfo.name : 'загрузка';
+        }
     },
     store: store,
     props: ['userid'],
@@ -80,57 +78,7 @@ export default {
             this.inputmessage = '';
             setTimeout(this.scrolldown, 80);
         }
-        /*async getmessages() {
-            if (this.currentpagenum <= this.lastpage) {
-                store.dispatch('requestForMessages', this.userid);
-                this.currentpagenum ++;
-                //Запрос на серврер получение сообщений с пользователем (по 30 шт) и номер страницы(пагинация)
-                let response = await fetch(store.getters.apiserver + 'dialogues/' + this.userid + '?page=' + this.currentpagenum, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json;charset=utf-8',
-                        'Access-Control-Allow-Origin': '<origin>',
-                        'Authorization': 'Bearer ' + store.getters.gettoken,
-                    },
-                });
-                let result = await response.json(); //ответ в json
-                let code = await response.status; //код ответа
-                switch (await code) {
-                    //Успешно
-                    case 200:
-                        this.lastpage = result.last_page;//устанавливаем значение последней страницы
-                        result.data.entries(result.data);//конвертация в массив
 
-                        //Сохраняем сообщения в массив
-                        if (this.messages.length > 0) {//проверка, были ли получены сообщения или нет
-                            //запись в массив сообщений
-                            for (let message in result.data) {
-                                this.messages.unshift(result.data[message]);
-                            }
-                        } else {
-                            //первичное добавление сообщений
-                            this.messages = this.messages.concat(result.data.reverse());
-                            //Изменяем положение scroll у блока
-                            setTimeout(this.scrolldown, 200);
-                            setTimeout(this.scrollevent, 200);
-                        }
-                        this.currentpagenum = result.current_page;//следующий запрос - следущая страница
-                        break;
-                    //Ошибка
-                    default:
-                        showalert('Ошибка!', 'Ошибка при загрузки сообщений: ' + code);
-                        break;
-                }
-            } else {
-                showalert('Успешно', 'Достигнут конец диалога');
-            }
-        },
-        scrollmess(event) {
-            if (event.srcElement.scrollTop === 0) {
-                this.getmessages();
-            }
-        },*/
     },
     async created() {
         await this.getmessages();

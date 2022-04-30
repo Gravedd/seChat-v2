@@ -2,6 +2,7 @@
 namespace App\sockets;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DialoguesController;
 use App\Http\Controllers\MessagesController;
 use App\Models\SocketUser;
 use App\sockets\base\baseSocket;
@@ -39,6 +40,10 @@ class ChatSocket extends baseSocket {
             case 'auth':
                 $this->Authorization($from, $msg['token']);
                 break;
+            case 'getdialogues':
+                $dialogues = DialoguesController::getDialogues($this->clients[$from->resourceId]->id);
+                $this->clients[$from->resourceId]->send(json_encode(['type'=>'dialogueslist', 'dialogues'=>$dialogues]));
+                break;
             case 'getmessages':
                 $messages = MessagesController::getUserMessagesInDialogWS($this->clients[$from->resourceId]->id, $msg['userid']);
                 $this->clients[$from->resourceId]->send(json_encode(['type'=>'getmessages', 'user_id' => $msg['userid'], 'messages'=>$messages]));
@@ -46,6 +51,7 @@ class ChatSocket extends baseSocket {
             case 'message':
                 $this->sendMessagesToUser($this->clients[$from->resourceId]->id, $msg['to'], $msg['messagetext']);
                 break;
+
             default:
                 $from->send(json_encode(['message'=> 'не корректный тип сообщения']));
                 break;
@@ -67,6 +73,8 @@ class ChatSocket extends baseSocket {
         echo "An error has occurred: {$e->getMessage()}\n";
         $conn->close();
     }
+
+
 
     /** Методы отправки сообщений */
 

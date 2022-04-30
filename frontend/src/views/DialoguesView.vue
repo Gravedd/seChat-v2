@@ -2,24 +2,16 @@
 <div class="container">
     <div class="dialogueswrapper">
         <div class="leftpanel">
-            <div class="userwrapper module">
-                <router-link to="/dialogues/1">
-                    <h3>@nickname</h3>
-                    <div>Последнее сообщение</div>
+            <h3 title="Нажатие обновляет этот список" @click="updateList()">Список диалогов</h3>
+            <div class="userwrapper module"
+                 v-for="dialogue in dialogues"
+            >
+                <router-link :to="{ name: 'chat', params: { userid: dialogue.user_id === $store.getters.getuid ? dialogue['user2'].id : dialogue['user1'].id } }">
+                    <h3>{{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].name : dialogue['user1'].name }}</h3>
+                    <div>Был онлайн: {{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].updated_at : dialogue['user1'].updated_at }}</div>
                 </router-link>
             </div>
-            <div class="userwrapper module">
-                <router-link to="/dialogues/2">
-                    <h3>@nickname</h3>
-                    <div>Последнее сообщение</div>
-                </router-link>
-            </div>
-            <div class="userwrapper module">
-                <router-link to="/dialogues/3">
-                    <h3>@nickname</h3>
-                    <div>Последнее сообщение</div>
-                </router-link>
-            </div>
+
         </div>
     </div>
 </div>
@@ -32,33 +24,22 @@ import store from "@/store";
 export default {
     name: "DialoguesView",
     components: {IndexView, Iconbutton},
-    methods: {
-        async getDialogues(){
-            let response = await fetch(store.getters.apiserver + 'dialogues', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=utf-8',
-                    'Access-Control-Allow-Origin': '<origin>',
-                    'Authorization': 'Bearer ' + store.getters.gettoken,
-                },
-            });
-            let result = await response.json(); //ответ в json
-            let code = await response.status; //код ответа
-            switch (await code) {
-                case 200: //Успешно
-                    console.log(result);
-                    break;
-                default: //Другая ошибка
-                    showalert('Ошибка!', 'Ошибка при загрузки списка диалогов: ' + code);
-                    console.log(result);
-                    break;
+    store: store,
+    computed: {
+        dialogues() {
+            if (sessionStorage.getItem('dialoguesjson')) {
+                return JSON.parse(sessionStorage.getItem('dialoguesjson'))
             }
+            return store.getters.getDialogues;
+        }
+    },
+    methods: {
+        updateList(){
+            store.dispatch('RequestForDialoguesList');
         }
     },
     created() {
-        this.getDialogues();
-
+        this.updateList();
     }
 }
 </script>
@@ -85,5 +66,8 @@ export default {
 .userwrapper:hover {
     transform: scale(1.02);
     transition: 0.25s;
+}
+h3 {
+    margin-bottom: 8px;
 }
 </style>

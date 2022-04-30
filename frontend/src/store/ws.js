@@ -1,4 +1,5 @@
 import ChatWS from "@/store/ChatWS";
+import dialogues from "@/store/dialogues";
 import router from "@/router";
 export default {
     state: {
@@ -44,6 +45,9 @@ export default {
                             context.dispatch('newMessage', response);
                         }
                         break;
+                    case 'dialogueslist':
+                        context.commit('changeDialogues', response);
+                        break;
 
                     default:
                         console.log('полученно сообщение');
@@ -62,6 +66,6 @@ export default {
         }
     },
     modules: {
-        ChatWS
+        ChatWS, dialogues
     }
 }

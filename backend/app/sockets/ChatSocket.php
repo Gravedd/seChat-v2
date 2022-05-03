@@ -51,7 +51,9 @@ class ChatSocket extends baseSocket {
             case 'message':
                 $this->sendMessagesToUser($this->clients[$from->resourceId]->id, $msg['to'], $msg['messagetext']);
                 break;
-
+            case 'typing':
+                $this->sendTyping($this->clients[$from->resourceId]->id, $msg['receiver_id']);
+                break;
             default:
                 $from->send(json_encode(['message'=> 'не корректный тип сообщения']));
                 break;
@@ -100,8 +102,16 @@ class ChatSocket extends baseSocket {
         }
     }
 
-    protected function sendMessagesToUserWithoutSender () {
-
+    protected function sendTyping ($uid, $receiver_id) {
+        $jsontosend = json_encode([
+            'type' => 'typing',
+            'sender_id' => $receiver_id,
+        ]);
+        foreach ($this->clients as $client) {
+            if ($client->id == $receiver_id) {
+                $client->send($jsontosend);
+            }
+        }
     }
 
 

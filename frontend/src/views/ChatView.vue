@@ -41,6 +41,7 @@ export default {
 /*            messages: store.getters.getMessagess,*/
             inputmessage: '',
             dialogkey: 'dialog' + this.userid,
+            delay: 0,
         }
     },
     computed: {
@@ -54,6 +55,14 @@ export default {
     },
     store: store,
     props: ['userid'],
+    watch: {
+        inputmessage(){
+            if (this.delay === 0) {
+                this.setDelay();
+                store.dispatch('typing', {receiver_id: this.userid});
+            }
+        }
+    },
     methods: {
         async getmessages() {
             store.dispatch('requestForMessages', this.userid);
@@ -77,8 +86,14 @@ export default {
             store.commit('addMessage', data);
             this.inputmessage = '';
             setTimeout(this.scrolldown, 80);
+        },
+        async setDelay() {
+            this.delay = 1;
+            setTimeout(this.dropDelay, 1500);
+        },
+        async dropDelay() {
+            this.delay = 0;
         }
-
     },
     async created() {
         await this.getmessages();

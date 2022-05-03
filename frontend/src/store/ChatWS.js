@@ -49,5 +49,12 @@ export default {
                 msgwrapper.scrollTop = msgwrapper.scrollHeight;
             }
         },
+        typing(context, data) {
+            let send = JSON.stringify({
+                'type': 'typing',
+                'receiver_id': data.receiver_id
+            })
+            store.state.ws.websocket.send(send);
+        }
     }
 }

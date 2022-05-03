@@ -48,7 +48,9 @@ export default {
                     case 'dialogueslist':
                         context.commit('changeDialogues', response);
                         break;
-
+                    case 'typing' :
+                        console.log(this);
+                        break;
                     default:
                         console.log('полученно сообщение');
                         console.log(response);

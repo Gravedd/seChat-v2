@@ -31,6 +31,11 @@ export default {
             return store.getters.getDialogues;
         }
     },
+    data() {
+        return{
+            timingid: 0
+        }
+    },
     methods: {
         updateList(){
             store.dispatch('RequestForDialoguesList');
@@ -47,7 +52,8 @@ export default {
                 for (let key in this.dialogues) {
                     if (this.dialogues[key].user_id == req.sender_id || this.dialogues[key].user2_id == req.sender_id) {
                         store.commit('setTypingStatus', {'key': key, "status": true})
-                        setTimeout(this.removeTypingStatus, 1500, key);
+                        clearTimeout(this.timingid);
+                        this.timingid = setTimeout(this.removeTypingStatus, 1500, key);
                     }
                 }
 

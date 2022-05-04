@@ -8,7 +8,8 @@
             >
                 <router-link :to="{ name: 'chat', params: { userid: dialogue.user_id === $store.getters.getuid ? dialogue['user2'].id : dialogue['user1'].id } }">
                     <h3>{{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].name : dialogue['user1'].name }}</h3>
-                    <div>Был онлайн: {{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].updated_at : dialogue['user1'].updated_at }}</div>
+                    <div v-show="!dialogue.typing">Был онлайн: {{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].updated_at : dialogue['user1'].updated_at }}</div>
+                    <div v-show="dialogue.typing" class="animpulse">Набирает сообщение...</div>
                 </router-link>
             </div>
 
@@ -27,19 +28,31 @@ export default {
     store: store,
     computed: {
         dialogues() {
-            if (sessionStorage.getItem('dialoguesjson')) {
-                return JSON.parse(sessionStorage.getItem('dialoguesjson'))
-            }
             return store.getters.getDialogues;
         }
     },
     methods: {
         updateList(){
             store.dispatch('RequestForDialoguesList');
+        },
+        removeTypingStatus(key) {
+            store.commit('setTypingStatus', {'key': key, status: false})
         }
     },
-    created() {
+    async created() {
         this.updateList();
+        store.getters.websocket.onmessage = e => {
+            let req = JSON.parse(e.data);
+            if (req.type === "typing") {
+                for (let key in this.dialogues) {
+                    if (this.dialogues[key].user_id == req.sender_id || this.dialogues[key].user2_id == req.sender_id) {
+                        store.commit('setTypingStatus', {'key': key, "status": true})
+                        setTimeout(this.removeTypingStatus, 1500, key);
+                    }
+                }
+
+            }
+        }
     }
 }
 </script>
@@ -69,5 +82,16 @@ export default {
 }
 h3 {
     margin-bottom: 8px;
+}
+.animpulse {
+    animation: ease-in-out 1s animationpulse infinite;
+}
+@keyframes animationpulse {
+    50% {
+        opacity: 0.1;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>

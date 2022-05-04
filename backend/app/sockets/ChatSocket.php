@@ -105,7 +105,7 @@ class ChatSocket extends baseSocket {
     protected function sendTyping ($uid, $receiver_id) {
         $jsontosend = json_encode([
             'type' => 'typing',
-            'sender_id' => $receiver_id,
+            'sender_id' => $uid,
         ]);
         foreach ($this->clients as $client) {
             if ($client->id == $receiver_id) {

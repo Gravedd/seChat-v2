@@ -27,6 +27,7 @@ export default {
             }
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);
+                console.log(response)
                 switch (response.type) {
 
                     case 'sendauthtoken':
@@ -46,10 +47,17 @@ export default {
                         }
                         break;
                     case 'dialogueslist':
+                        console.log(response)
                         context.commit('changeDialogues', response);
                         break;
-                    case 'typing' :
-                        console.log(this);
+                    case 'typing':
+                        if (router.currentRoute._value.name === 'chat') {
+                            context.dispatch('addTyping', response);
+                        }
+                        if (router.currentRoute._value.name === 'dialogues'){
+                            console.log('d')
+                            context.dispatch('typingstatus', response);
+                        }
                         break;
                     default:
                         console.log('полученно сообщение');

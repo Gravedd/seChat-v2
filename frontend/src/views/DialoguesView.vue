@@ -46,19 +46,6 @@ export default {
     },
     async created() {
         this.updateList();
-        store.getters.websocket.onmessage = e => {
-            let req = JSON.parse(e.data);
-            if (req.type === "typing") {
-                for (let key in this.dialogues) {
-                    if (this.dialogues[key].user_id == req.sender_id || this.dialogues[key].user2_id == req.sender_id) {
-                        store.commit('setTypingStatus', {'key': key, "status": true})
-                        clearTimeout(this.timingid);
-                        this.timingid = setTimeout(this.removeTypingStatus, 1500, key);
-                    }
-                }
-
-            }
-        }
     }
 }
 </script>

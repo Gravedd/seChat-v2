@@ -19,9 +19,10 @@
                         <div class="time">{{ message.created_at }}</div>
                     </div>
                     <div style="text-align: center;" v-if="!messages['dialog' + userid]"><b>Cообщений нет</b></div>
+                    <div class="typing" v-show="typing">Набирает сообщение...</div>
                 </div>
                 <div class="chatinputwrapper">
-                    <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off" v-model="inputmessage">
+                    <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off" v-model="inputmessage" @keypress.enter="sendMessage">
                     <iconbutton image="/icons/interface/send.svg" title="Отправить сообщение" nopadding="true" class="sendbtn" @click="sendMessage"></iconbutton>
                 </div>
             </div>
@@ -51,6 +52,10 @@ export default {
         name() {
             let savedinfo = JSON.parse(sessionStorage.getItem('user' + this.userid));
             return savedinfo ? savedinfo.name : 'загрузка';
+        },
+        typing() {
+            /*store.commit('createTyping', this.userid)*/
+            return store.getters.getTyping[this.userid];
         }
     },
     store: store,
@@ -73,19 +78,22 @@ export default {
             msgwrapper.scrollTop = msgwrapper.scrollHeight;
         },
         async sendMessage() {
-            store.dispatch('sendMessage', {'user_id' : this.userid, 'messagetext': this.inputmessage});
-            let data = {
-                id: 1,
-                receiver_id: this.userid,
-                sender_id: store.getters.getuid,
-                message: this.inputmessage,
-                readed: 0,
-                created_at: "2022-04-02T20:44:31.000000Z",
-                updated_at: "2022-04-02T20:44:31.000000Z",
+            this.inputmessage = this.inputmessage.trim();
+            if (this.inputmessage.length > 0) {
+                store.dispatch('sendMessage', {'user_id': this.userid, 'messagetext': this.inputmessage});
+                let data = {
+                    id: 1,
+                    receiver_id: this.userid,
+                    sender_id: store.getters.getuid,
+                    message: this.inputmessage,
+                    readed: 0,
+                    created_at: "2022-04-02T20:44:31.000000Z",
+                    updated_at: "2022-04-02T20:44:31.000000Z",
+                }
+                store.commit('addMessage', data);
+                this.inputmessage = '';
+                setTimeout(this.scrolldown, 80);
             }
-            store.commit('addMessage', data);
-            this.inputmessage = '';
-            setTimeout(this.scrolldown, 80);
         },
         async setDelay() {
             this.delay = 1;
@@ -165,6 +173,7 @@ export default {
     background-color: var(--gray3);
     border-radius: 8px;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+    word-wrap: break-word;
 }
 .sent {
     margin-left: auto;
@@ -220,6 +229,17 @@ export default {
 .inputmess:focus {
     outline: none;
     box-shadow: 0 0 5px 0 var(--main-color);
+}
+.typing {
+    animation: ease-in-out 1s animationpulse infinite;
+}
+@keyframes animationpulse {
+    50% {
+        opacity: 0.1;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 @media (max-width: 960px) {
     .rightpanel {

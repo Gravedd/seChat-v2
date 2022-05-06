@@ -1,13 +1,15 @@
 import store from '@/store';
 export default {
     state: {
-        dialogues: JSON.parse(sessionStorage.getItem('dialoguesjson')) || {},
+        dialogues: {},
+        timingid: 0,
     },
     getters: {
         getDialogues: (state) => state.dialogues,
     },
     mutations: {
         changeDialogues: (state, value) => {
+            console.log(value)
             sessionStorage.setItem('dialoguesjson', JSON.stringify(value.dialogues));
             state.dialogues = value.dialogues;
             for (let i = 0; i < value.dialogues.length; i++) {
@@ -24,7 +26,9 @@ export default {
             }
         },
         setTypingStatus: (state, value) => {
+            console.log(value)
             state.dialogues[value.key]['typing'] = value.status;
+            console.log(state.dialogues[value.key]['typing']);
         }
     },
     actions: {
@@ -33,5 +37,17 @@ export default {
                 'type': 'getdialogues'
             }));
         },
+        async typingstatus(context, value) {
+            for (let key in context.state.dialogues) {
+                if (context.state.dialogues[key].user_id === value.sender_id || context.state.dialogues[key].user2_id === value.sender_id) {
+                    store.commit('setTypingStatus', {'key': key, "status": true})
+                    clearTimeout(context.state.timingid);
+                    context.state.timingid = setTimeout(store.dispatch, 1500, 'removeTypingStatus', key);
+                }
+            }
+        },
+        async removeTypingStatus(context, key) {
+            store.commit('setTypingStatus', {'key': key, status: false})
+        }
     }
 }

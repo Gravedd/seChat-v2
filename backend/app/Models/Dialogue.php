@@ -22,4 +22,5 @@ class Dialogue extends Model
     public function user2() {
         return $this->belongsTo(User::class, 'user2_id');
     }
+
 }

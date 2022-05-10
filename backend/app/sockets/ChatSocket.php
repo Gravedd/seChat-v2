@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DialoguesController;
 use App\Http\Controllers\MessagesController;
 use App\Models\SocketUser;
+use App\Models\User;
 use App\sockets\base\baseSocket;
 use Psy\Util\Json;
 use Ratchet\MessageComponentInterface;
@@ -31,7 +32,7 @@ class ChatSocket extends baseSocket {
 
     //Сообщение
     public function onMessage(ConnectionInterface $from, $msg) {
-        echo $from->resourceId . ' : ' . $msg;
+        echo $from->resourceId . ' : ' . $msg."\n";
         $msg = json_decode($msg, true);
 
         //Определяем тип сообщения
@@ -65,6 +66,9 @@ class ChatSocket extends baseSocket {
         // The connection is closed, remove it, as we can no longer send it messages
         if (isset($this->clients[$conn->resourceId]->auth)) {
             $this->removeUserInDB($conn->resourceId);
+            $user = User::find($this->clients[$conn->resourceId]->id);
+                $user->online = false;
+            $user->save();
         }
         unset($this->clients[$conn->resourceId]);
         echo "Пользователь ({$conn->resourceId}) отключился\n";
@@ -129,7 +133,8 @@ class ChatSocket extends baseSocket {
             $this->successAuthenticated($user->id, $requser->resourceId);
             //Записываем, что пользователь авторизован
             $this->clients[$requser->resourceId]->auth = true;
-            $this->clients[$requser->resourceId]->id = $user->id;
+            $user->online = true;
+            $user->save();
             echo "Пользователь $user->name ($requser->resourceId) c айди $user->id успешно авторизован\n";
         } else {
             $requser->send(json_encode(['message'=> 'Не верный токен']));

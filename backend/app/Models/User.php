@@ -50,4 +50,7 @@ class User extends Authenticatable
     public function friend() {
         return $this->belongsTo(Friend::class, 'friend_id', 'id');
     }
+    public function isOnline() {
+        return $this->hasOne(SocketUser::class, 'user_id', 'id')->select(array('id', 'user_id'));
+    }
 }

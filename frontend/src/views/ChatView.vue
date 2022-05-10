@@ -154,6 +154,7 @@ export default {
     overflow-x: hidden;
     border-top: 2px solid var(--main-color);
     border-bottom: 2px solid var(--main-color);
+    background-color: #f4f4f4;
 }
 /* полоса прокрутки (скроллбар) */
 .chatcontainer::-webkit-scrollbar {
@@ -172,7 +173,7 @@ export default {
     padding: 12px;
     background-color: var(--gray3);
     border-radius: 8px;
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.05);
     word-wrap: break-word;
 }
 .sent {

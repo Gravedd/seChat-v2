@@ -36,7 +36,7 @@ class UsersController extends Controller
      * Return user info
      */
     public function getUser (Request $request,$userid) {
-        $user = User::Select('id', 'name', 'status', 'created_at', 'updated_at')->find($userid);
+        $user = User::Select('id', 'name', 'status', 'created_at', 'updated_at')->with('isOnline')->find($userid);
         if (!isset($user)) {
             return response()->json($user, 404);
         }

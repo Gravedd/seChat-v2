@@ -8,7 +8,16 @@
             >
                 <router-link :to="{ name: 'chat', params: { userid: dialogue.user_id === $store.getters.getuid ? dialogue['user2'].id : dialogue['user1'].id } }">
                     <h3>{{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].name : dialogue['user1'].name }}</h3>
-                    <div v-show="!dialogue.typing">Был онлайн: {{ dialogue.user_id === $store.getters.getuid ? dialogue['user2'].updated_at : dialogue['user1'].updated_at }}</div>
+                    <div v-show="!dialogue.typing">
+                        {{
+                            dialogue.user_id === $store.getters.getuid ?
+                                dialogue['user2'].online === 1 ?
+                                    'Онлайн' : 'Был онлайн:' + dialogue['user2'].updated_at
+                                :
+                                dialogue['user1'].online === 1 ?
+                                    'Онлайн' : 'Был онлайн:' + dialogue['user1'].updated_at
+                        }}
+                    </div>
                     <div v-show="dialogue.typing" class="animpulse">Набирает сообщение...</div>
                 </router-link>
             </div>

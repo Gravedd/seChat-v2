@@ -9,7 +9,6 @@ export default {
     },
     mutations: {
         changeDialogues: (state, value) => {
-            console.log(value)
             sessionStorage.setItem('dialoguesjson', JSON.stringify(value.dialogues));
             state.dialogues = value.dialogues;
             for (let i = 0; i < value.dialogues.length; i++) {
@@ -26,7 +25,6 @@ export default {
             }
         },
         setTypingStatus: (state, value) => {
-            console.log(value)
             state.dialogues[value.key]['typing'] = value.status;
             console.log(state.dialogues[value.key]['typing']);
         }

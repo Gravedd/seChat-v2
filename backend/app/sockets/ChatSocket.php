@@ -18,7 +18,10 @@ class ChatSocket extends baseSocket {
 
     public function __construct() {
         $this->clients = [];
+        echo "     Сброс БД...\n";
         SocketUser::truncate();//Сброс бд
+        echo "     Сброс онлайна...\n";
+        User::where('online', 1)->update(['online'=>0]);
         echo "Сервер успешно запущен!\n";
     }
 
@@ -76,7 +79,7 @@ class ChatSocket extends baseSocket {
 
     //Ошибка
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "An error has occurred: {$e->getMessage()}\n";
+        echo "Ошибка: {$e->getMessage()}\n";
         $conn->close();
     }
 
@@ -133,6 +136,7 @@ class ChatSocket extends baseSocket {
             $this->successAuthenticated($user->id, $requser->resourceId);
             //Записываем, что пользователь авторизован
             $this->clients[$requser->resourceId]->auth = true;
+            $this->clients[$requser->resourceId]->id = $user->id;
             $user->online = true;
             $user->save();
             echo "Пользователь $user->name ($requser->resourceId) c айди $user->id успешно авторизован\n";

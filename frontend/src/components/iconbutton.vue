@@ -1,6 +1,6 @@
 <template>
-    <div class="btn">
-        <img v-bind:src="image" width="25" v-bind:class="{nopaddingclass: nopadding}">
+    <div class="btn" v-bind:class="{nobackground: nobackground}">
+        <img v-bind:src="image" width="25" v-bind:class="{nopaddingclass: nopadding}" >
         <slot></slot>
     </div>
 </template>
@@ -16,6 +16,7 @@ export default {
     props: {
         image: String,
         nopadding: String,
+        nobackground: String,
     }
 }
 </script>
@@ -47,5 +48,8 @@ img {
 }
 .disabled:hover {
     transform: none;
+}
+.nobackground {
+    background-color: transparent;
 }
 </style>

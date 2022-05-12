@@ -4,7 +4,10 @@
         <div class="rightpanel module">
             <div class="chatwrapper">
                 <div class="chatheader">
-                    <h2 class="chatheaderh2"><router-link to="/dialogues/"><iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"/></router-link>{{ name }}</h2>
+                    <h2 class="chatheaderh2">
+                        <router-link to="/dialogues/"><iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"/></router-link>
+                        {{ userWidth > 1390 ? name  : (userWidth < 698 ? name : name.substr(0, 4) + '...')}}
+                    </h2>
                     <input type="text" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
                     <div class="keywrapper">
                         <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
@@ -23,7 +26,7 @@
                 </div>
                 <div class="chatinputwrapper">
                     <input type="text" maxlength="512" name="message" placeholder="Сообщение..." class="inputmess" autocomplete="off" v-model="inputmessage" @keypress.enter="sendMessage">
-                    <iconbutton image="/icons/interface/send.svg" title="Отправить сообщение" nopadding="true" class="sendbtn" @click="sendMessage"></iconbutton>
+                    <iconbutton image="/icons/interface/send.svg" title="Отправить сообщение" nopadding="true" nobackground="true" class="sendbtn" @click="sendMessage"></iconbutton>
                 </div>
             </div>
         </div>
@@ -56,7 +59,10 @@ export default {
         typing() {
             /*store.commit('createTyping', this.userid)*/
             return store.getters.getTyping[this.userid];
-        }
+        },
+        userWidth() {
+            return store.getters.getClientWidth;
+        },
     },
     store: store,
     props: ['userid'],
@@ -118,7 +124,7 @@ export default {
 }
 .chatheaderh2 {
     display: flex;
-
+    flex-direction: row;
 }
 .rightpanel{
     width: 100%;
@@ -129,9 +135,6 @@ export default {
     align-items: center;
     padding: 8px 8px;
     justify-content: center;
-}
-.chatheader h2{
-    display: inline-block;
 }
 .keywrapper {
     display: flex;
@@ -215,8 +218,8 @@ export default {
     max-height: 75px;
     background-color: var(--gray3);
     border-radius: 20px;
-    border: 2px solid var(--main-color);
-    padding: 8px;
+    border: none;
+    padding: 16px;
     width: 80%;
     transition: 0.3s;
     font-size: 14pt;
@@ -242,9 +245,17 @@ export default {
         opacity: 1;
     }
 }
+@media (max-width: 1500px) {
+    .dialogueswrapper{
+        padding: 8px 150px;
+    }
+}
 @media (max-width: 960px) {
     .rightpanel {
         width: 100%;
+    }
+    .dialogueswrapper{
+        padding: 8px 32px;
     }
 }
 @media (max-width: 720px) {
@@ -292,10 +303,17 @@ export default {
         width: 90%;
     }
 }
-@media (max-width: 381px) {
-
+@media (max-width: 442px) {
+    .chatheaderh2 {
+        overflow: hidden;
+    }
+}
+@media (max-width: 390px) {
     .chatheader input {
         margin: 0 4px 0 0;
+    }
+    .dialogueswrapper {
+        padding: 8px 8px;
     }
 }
 @media (max-width: 340px) {

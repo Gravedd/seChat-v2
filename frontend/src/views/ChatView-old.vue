@@ -3,38 +3,20 @@
     <div class="dialogueswrapper">
         <div class="rightpanel module">
             <div class="chatwrapper">
-
-
-                <div class="chatheader">
+                <div class="chatheader">3213213
                     <h2 class="chatheaderh2">
-                        <div class="chatheadername">
-                            <router-link to="/dialogues/">
-                                <iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"
-                                            nobackground="true"/>
-                            </router-link>
-                            {{ userWidth > 1390 ? name : (userWidth < 698 ? name : name.substr(0, 8) + '...') }}
-                            <iconbutton
-                                title="Дополнительные настройки"
-                                image="/icons/interface/extra.svg"
-                                nopadding="true" nobackground="true"
-                                @click="showExtraMenu"
-                            />
-                        </div>
+                        <router-link to="/dialogues/"><iconbutton image="/icons/interface/back.svg" title="Назад" nopadding="true"/></router-link>
+                        {{ userWidth > 1390 ? name  : (userWidth < 698 ? name : name.substr(0, 4) + '...')}}
                     </h2>
-                    <div class="keywrapper" v-show="showExtras">
-                        <input type="text" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
-                        <div class="keys">
-                            <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
-                            <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>
-                            <!--<iconbutton image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>-->
-                            <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true"></iconbutton>
-                        </div>
+                    <input type="text" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
+                    <div class="keywrapper">
+                        <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
+                        <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>
+                    <!--<iconbutton image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>-->
+                        <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true"></iconbutton>
                     </div>
-
                 </div>
-
-
-                <div class="chatcontainer" id="msgwrapper" v-on:scroll="scrollmess" :style="{'height': userHeight - (50+50+60 + (showExtras ? 140 : 10)) + 'px'}">
+                <div class="chatcontainer" id="msgwrapper" v-on:scroll="scrollmess">
                     <div v-if="messages" class="messwrapper" v-for="message in messages['dialog' + userid]" :class="{'sent': message.sender_id === $store.getters.getuid }" :title="message.id">
                         <div class="message">{{ message.message }}</div>
                         <div class="time">{{ message.created_at }}</div>
@@ -64,7 +46,6 @@ export default {
             inputmessage: '',
             dialogkey: 'dialog' + this.userid,
             delay: 0,
-            showExtras: false,
         }
     },
     computed: {
@@ -82,9 +63,6 @@ export default {
         userWidth() {
             return store.getters.getClientWidth;
         },
-        userHeight() {
-            return store.getters.getClientHeight;
-        },
     },
     store: store,
     props: ['userid'],
@@ -97,9 +75,6 @@ export default {
         }
     },
     methods: {
-        showExtraMenu() {
-            this.showExtras = !this.showExtras;
-        },
         async getmessages() {
             store.dispatch('requestForMessages', this.userid);
             setTimeout(this.scrolldown, 200);
@@ -143,55 +118,39 @@ export default {
 <style scoped>
 .dialogueswrapper {
     display: flex;
+    height: 841px;
     padding: 8px var(--padding);
     justify-content: space-between;
-    max-height: 95vh;
-    overflow: hidden;
-
 }
 .chatheaderh2 {
     display: flex;
     flex-direction: row;
-    justify-content: center;
 }
 .rightpanel{
     width: 100%;
 }
 .chatheader {
     display: flex;
-    flex-direction: column;
+    height: 50px;
     align-items: center;
     padding: 8px 8px;
     justify-content: center;
 }
 .keywrapper {
     display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    height: 1px;
-    overflow: hidden;
-    animation: ease-out 0.5s animExtramenu forwards;
 }
-.keywrapper input {
-    width: 70%;
+.chatheader input {
+    margin: 0 8px;
+    border-radius: 8px;
+    border: 1px solid var(--black-color);
+    background-color: var(--lighter-color);
+    min-width: 50%;
     height: 41px;
     display: block;
-    border-radius: 8px;
-    background-color: var(--gray3);
-    border: none;
-    margin-right: 8px;
-    padding-left: 16px;
-}
-.chatheadername {
-    display: flex;
-    align-items: center;
-    align-self: center;
-    justify-self: center;
 }
 .chatcontainer {
     width: 100%;
+    height: 700px;
     padding: 16px;
     font-family: "LightFont";
     overflow-y: scroll;
@@ -253,7 +212,6 @@ export default {
     justify-content: center;
     align-items: center;
     border-radius: 0 0 20px 20px;
-    padding: 4px;
 }
 .inputmess {
     height: 50px;
@@ -274,7 +232,7 @@ export default {
 }
 .inputmess:focus {
     outline: none;
-    box-shadow: 0 0 3px 0 var(--shadow-color);
+    box-shadow: 0 0 5px 0 var(--main-color);
 }
 .typing {
     animation: ease-in-out 1s animationpulse infinite;
@@ -285,14 +243,6 @@ export default {
     }
     100% {
         opacity: 1;
-    }
-}
-@keyframes animExtramenu {
-    0% {
-        height: 0;
-    }
-    100% {
-        height: 43px;
     }
 }
 @media (max-width: 1500px) {
@@ -318,6 +268,8 @@ export default {
 }
 @media (max-width: 700px) {
     .chatheader {
+        height: 100px;
+        max-height: 100px;
         flex-wrap: wrap;
         justify-content: center;
     }
@@ -326,30 +278,23 @@ export default {
         text-align: center;
         margin-bottom: 4px;
     }
-}
-@media (max-width: 596px) {
-    .keywrapper input {
-        width: 100%;
-        margin-bottom: 4px;
+    .chatheader input {
+        width: 50%;
     }
-    .chatheader {
-        padding: 4px;
-    }
-    .dialogueswrapper {
-        padding: 8px 8px;
-    }
-    @keyframes animExtramenu {
-        0% {
-            height: 0;
-        }
-        100% {
-            height: 86px;
-        }
+    .keywrapper {
+        width: 39%;
     }
 }
 @media (max-width: 546px) {
     .chatheader {
         padding: 8px;
+    }
+    .chatheader input {
+        width: 50%;
+        align-self: flex-start;
+    }
+    .chatheader .keywrapper {
+        width: 40%;
     }
     .chatheader {
         justify-content: flex-start;
@@ -361,6 +306,19 @@ export default {
 @media (max-width: 442px) {
     .chatheaderh2 {
         overflow: hidden;
+    }
+}
+@media (max-width: 390px) {
+    .chatheader input {
+        margin: 0 4px 0 0;
+    }
+    .dialogueswrapper {
+        padding: 8px 8px;
+    }
+}
+@media (max-width: 340px) {
+    .chatheader input {
+        width: 40%;
     }
 }
 </style>

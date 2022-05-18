@@ -4,6 +4,7 @@ namespace App\sockets;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DialoguesController;
 use App\Http\Controllers\MessagesController;
+use App\Models\Dialogue;
 use App\Models\SocketUser;
 use App\Models\User;
 use App\sockets\base\baseSocket;
@@ -88,6 +89,7 @@ class ChatSocket extends baseSocket {
     /** Методы отправки сообщений */
 
     protected function sendMessagesToUser ($uid, $receiver_id, $message) {
+        $this->checkDialogues($uid, $receiver_id);
         $jsontosend = json_encode([
             'type' => 'newmessage',
             'sender_id' => $uid,
@@ -106,6 +108,16 @@ class ChatSocket extends baseSocket {
         if (!MessagesController::SaveMessageInDB($uid, $receiver_id, $message)) {
             $log = date('Y-m-d H:i:s').'->'."Сообщение от $uid для $receiver_id ($message) не было сохранно в БД";
             file_put_contents(app_path() . '/logs/log.txt', $log . PHP_EOL, FILE_APPEND);
+        }
+    }
+    protected function checkDialogues($uid, $receiver_id) {
+        $dialogue = Dialogue::Where(function ($query) use ($uid, $receiver_id){
+            $query->Where('user_id', $uid)->Where('user2_id', $receiver_id);
+        })->orWhere(function ($query) use ($uid, $receiver_id){
+            $query->Where('user_id', $receiver_id)->Where('user2_id', $uid);
+        })->first();
+        if (!$dialogue) {
+            DialoguesController::createDialogue($uid, $receiver_id);
         }
     }
 

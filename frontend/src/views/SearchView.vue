@@ -1,7 +1,6 @@
 <template>
     <div class="container">
         <h1>Поиск пользователей</h1>
-        {{ $store.getters.websocketsurl }}
         <div class="searchcontainer">
             <div class="module">
                 <form class="searchform">

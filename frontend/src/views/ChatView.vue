@@ -65,15 +65,12 @@ export default {
             dialogkey: 'dialog' + this.userid,
             delay: 0,
             showExtras: false,
+            name: null,
         }
     },
     computed: {
         messages() {
             return store.getters.getMessagess;
-        },
-        name() {
-            let savedinfo = JSON.parse(sessionStorage.getItem('user' + this.userid));
-            return savedinfo ? savedinfo.name : 'загрузка';
         },
         typing() {
             /*store.commit('createTyping', this.userid)*/
@@ -97,6 +94,36 @@ export default {
         }
     },
     methods: {
+        async getProfile() {
+            let savedinfo = JSON.parse(sessionStorage.getItem('user' + this.userid));
+            if (savedinfo) {
+                return this.name = savedinfo.name;
+            } else {
+                let response = await fetch(store.getters.apiserver + 'users/' + this.userid,{
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=utf-8',
+                        'Access-Control-Allow-Origin': '<origin>',
+                        'Authorization': 'Bearer ' + store.getters.gettoken,
+                    }
+                });
+                let result = await response.json();
+                let code = await response.status;
+                switch (await code) {
+                    case 200:
+                        console.log(JSON.stringify(result[0]));
+                        sessionStorage.setItem('user' + result[0].id, JSON.stringify(result[0]));
+                        this.name = result[0].name;
+                        break;
+                    default:
+                        showalert('Ошибка', 'Не удачное получение данных');
+                        break;
+                }
+
+            }
+
+        },
         showExtraMenu() {
             this.showExtras = !this.showExtras;
         },
@@ -136,6 +163,7 @@ export default {
     },
     async created() {
         await this.getmessages();
+        await this.getProfile();
     },
 }
 </script>

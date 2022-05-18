@@ -145,7 +145,6 @@ export default {
     display: flex;
     padding: 8px var(--padding);
     justify-content: space-between;
-    max-height: 95vh;
     overflow: hidden;
 
 }

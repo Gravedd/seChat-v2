@@ -82,6 +82,12 @@ export default {
     transform: scale(1.02);
     transition: 0.25s;
 }
+.userwrapper a {
+    color: var(--black-color);
+}
+.userwrapper div {
+    font-size: 14pt;
+}
 h3 {
     margin-bottom: 8px;
 }

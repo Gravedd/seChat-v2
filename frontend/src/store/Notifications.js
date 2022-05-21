@@ -14,6 +14,7 @@ export default {
             state.notifications.push({
                 'headertext': data.headertext,
                 'contenttext': data.contenttext,
+                'userid': data.userid,
             });
         }
 

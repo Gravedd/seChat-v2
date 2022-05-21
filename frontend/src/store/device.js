@@ -10,6 +10,8 @@ export default {
     },
     actions: {
         deviceStart(context) {
+            context.state.clientWidth = window.innerWidth;
+            context.state.clientHeight = window.innerHeight;
             window.addEventListener('resize', function () {
                 store.dispatch('updateScreenSizes');
             })

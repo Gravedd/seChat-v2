@@ -41,8 +41,8 @@ export default {
 
                     case 'newmessage':
                         if (router.currentRoute._value.name !== 'chat') {
-                            let from = 'От пользователя с айди: ' + response.sender_id;
-                            context.commit('addNotification', {'headertext': 'Новое сообщение', 'contenttext': from})
+                            let mess = ' отправил вам сообщение';
+                            context.commit('addNotification', {'headertext': 'Новое сообщение', 'contenttext': mess, 'userid': response.sender_id})
                         } else {
                             context.dispatch('newMessage', response);
                         }

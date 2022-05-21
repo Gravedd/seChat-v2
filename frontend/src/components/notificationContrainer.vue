@@ -5,6 +5,7 @@
             :headertext="notification.headertext"
             :contenttext="notification.contenttext"
             :id="index"
+            :userid="notification.userid"
     />
 </div>
 </template>

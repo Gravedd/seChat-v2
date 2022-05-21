@@ -11,7 +11,7 @@
                     <h3 class="name">{{ friend.frienduser ? friend.frienduser.name : friend.userfriend.name}}</h3>
                 </router-link>
                 <div class="actions">
-                    <router-link to="">
+                    <router-link :to="{ name: 'chat', params: {userid: friend.frienduser ? friend.frienduser.id : friend.userfriend.id}}">
                         <iconbutton image="/icons/interface/new-message.svg">Перейти в диалог</iconbutton>
                     </router-link>
                         <iconbutton image="/icons/interface/remove.svg" @click="deletefriend(friend.frienduser ? friend.frienduser.id : friend.userfriend.id)">Удалить из друзей</iconbutton>

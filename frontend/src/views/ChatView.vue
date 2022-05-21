@@ -22,7 +22,7 @@
                         </div>
                     </h2>
                     <div class="keywrapper" v-show="showExtras">
-                        <input type="text" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
+                        <input type="text" v-model="skey" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
                         <div class="keys">
                             <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
                             <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>
@@ -64,8 +64,9 @@ export default {
             inputmessage: '',
             dialogkey: 'dialog' + this.userid,
             delay: 0,
-            showExtras: false,
+            showExtras: true,
             name: null,
+            skey: 'ddddddddddddd',
         }
     },
     computed: {
@@ -136,17 +137,18 @@ export default {
             msgwrapper.scrollTop = msgwrapper.scrollHeight;
         },
         async sendMessage() {
-            this.inputmessage = this.inputmessage.trim();
-            if (this.inputmessage.length > 0) {
-                store.dispatch('sendMessage', {'user_id': this.userid, 'messagetext': this.inputmessage});
+            let msg = this.messageEncryption()
+            msg = msg.trim();
+            if (msg.length > 0) {
+                store.dispatch('sendMessage', {'user_id': this.userid, 'messagetext': msg});
                 let data = {
                     id: 1,
                     receiver_id: this.userid,
                     sender_id: store.getters.getuid,
-                    message: this.inputmessage,
+                    message: msg,
                     readed: 0,
-                    created_at: "2022-04-02T20:44:31.000000Z",
-                    updated_at: "2022-04-02T20:44:31.000000Z",
+                    created_at: "2022-04-02 20:44:31.000000",
+                    updated_at: "2022-04-02 20:44:31.000000",
                 }
                 store.commit('addMessage', data);
                 this.inputmessage = '';
@@ -159,7 +161,23 @@ export default {
         },
         async dropDelay() {
             this.delay = 0;
-        }
+        },
+        messageEncryption() {
+            let message = this.inputmessage;
+            let skey = this.skey;
+            let output = '';
+            let letter;
+            let key;
+            for (let i = 0; i < message.length; i++) {
+                // берём цифровое значение очередного символа в сообщении и ключе
+                letter = message.charCodeAt(i);
+                key = skey.charCodeAt(i);
+                // и применяем к ним исключающее или — XOR
+                output += String.fromCharCode(letter ^ key);
+            }
+            return output;
+        },
+
     },
     async created() {
         await this.getmessages();

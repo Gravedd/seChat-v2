@@ -37,4 +37,40 @@ export default {
     display: flex;
     flex-direction: column-reverse;
 }
+@media (max-width: 1802px) {
+    .notificationContainer {
+        left: 80vw;
+    }
+}
+@media (max-width: 1486px) {
+    .notificationContainer {
+        left: 75vw;
+    }
+}
+@media (max-width: 1162px) {
+    .notificationContainer {
+        left: 70vw;
+    }
+}
+@media (max-width: 1008px) {
+    .notificationContainer {
+        left: 60vw;
+    }
+}
+@media (max-width: 758px) {
+    .notificationContainer {
+        left: 50vw;
+    }
+}
+@media (max-width: 604px) {
+    .notificationContainer {
+        left: 5vw;
+    }
+}
+@media (max-width: 500px) {
+    .notificationContainer {
+        left: 5vw;
+        bottom: 538px;
+    }
+}
 </style>

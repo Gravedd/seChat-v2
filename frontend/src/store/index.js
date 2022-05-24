@@ -155,6 +155,7 @@ export default createStore({
                 //Удачная авторизация
                 case 200:
                     context.commit('authsuccess', {'uid': result.id, 'name': result.name, 'email': result.email, 'token': context.getters.gettoken, 'status': result['status']});
+                    context.dispatch('connectws');
                     break;
                 //Не удачная проверка токена
                 default:

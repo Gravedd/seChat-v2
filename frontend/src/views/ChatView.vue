@@ -26,8 +26,8 @@
                         <input v-show="showkey" type="text" v-model="skey" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
                         <div class="keys">
                             <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true" @click="saveKey"></iconbutton>
-                            <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true" @click="keyVisibilityToggle"></iconbutton>
-                            <!--<iconbutton image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>-->
+                            <iconbutton v-show="!showkey" image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true" @click="keyVisibilityToggle"></iconbutton>
+                            <iconbutton v-show="showkey" image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true" @click="keyVisibilityToggle"></iconbutton>
                             <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true" @click="deleteKey"></iconbutton>
                         </div>
                     </div>

@@ -28,7 +28,6 @@ function showalert(header, text)
 
 function closealert() {
     let title = this.title;
-    console.log(title);
     let alertwindow = document.querySelector('#alertbg[title="' + title + '"]');
     alertwindow.remove();
 }

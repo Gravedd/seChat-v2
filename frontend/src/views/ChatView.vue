@@ -28,7 +28,7 @@
                             <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true" @click="saveKey"></iconbutton>
                             <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true" @click="keyVisibilityToggle"></iconbutton>
                             <!--<iconbutton image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>-->
-                            <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true"></iconbutton>
+                            <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true" @click="deleteKey"></iconbutton>
                         </div>
                     </div>
 
@@ -66,7 +66,7 @@ export default {
             delay: 0,
             showExtras: true,
             name: null,
-            skey: localStorage.getItem('keyid' + this.userid) || 'dddddd321321ddddddd',
+            skey: localStorage.getItem('keyid' + this.userid) || 'тестовыйключ12345431542',
             showkey: false,
         }
     },
@@ -178,6 +178,10 @@ export default {
         saveKey() {
             localStorage.setItem('keyid' + this.userid, this.skey);
             showalert('Успешно!', 'Ключ сохранен на вашем устройстве');
+        },
+        deleteKey() {
+            localStorage.removeItem('keyid' + this.userid);
+            showalert('Успешнo', 'Ключ удален');
         },
         keyVisibilityToggle() {
             return this.showkey = !this.showkey;

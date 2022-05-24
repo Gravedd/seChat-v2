@@ -64,9 +64,9 @@ export default {
             inputmessage: '',
             dialogkey: 'dialog' + this.userid,
             delay: 0,
-            showExtras: true,
+            showExtras: false,
             name: null,
-            skey: localStorage.getItem('keyid' + this.userid) || 'тестовыйключ12345431542',
+            skey: localStorage.getItem('keyid' + this.userid) || '',
             showkey: false,
         }
     },

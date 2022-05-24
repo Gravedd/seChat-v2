@@ -36,7 +36,7 @@
 
                 <div class="chatcontainer" id="msgwrapper" v-on:scroll="scrollmess" :style="{'height': userHeight - (50+50+60 + (showExtras ? 140 : 10)) + 'px'}">
                     <div v-if="messages" class="messwrapper" v-for="message in messages['dialog' + userid]" :class="{'sent': message.sender_id === $store.getters.getuid }" :title="message.id">
-                        <div class="message">{{ message.message }}</div>
+                        <div class="message">{{ encryptMessage(skey, message.message) }} </div>
                         <div class="time">{{ message.created_at }}</div>
                     </div>
                     <div style="text-align: center;" v-if="!messages['dialog' + userid]"><b>Cообщений нет</b></div>
@@ -60,7 +60,6 @@ export default {
     components: {IndexView, Iconbutton},
     data() {
         return {
-/*            messages: store.getters.getMessagess,*/
             inputmessage: '',
             dialogkey: 'dialog' + this.userid,
             delay: 0,
@@ -74,7 +73,6 @@ export default {
             return store.getters.getMessagess;
         },
         typing() {
-            /*store.commit('createTyping', this.userid)*/
             return store.getters.getTyping[this.userid];
         },
         userWidth() {
@@ -137,7 +135,7 @@ export default {
             msgwrapper.scrollTop = msgwrapper.scrollHeight;
         },
         async sendMessage() {
-            let msg = this.messageEncryption()
+            let msg = this.encryptMessage(this.skey, this.inputmessage)
             msg = msg.trim();
             if (msg.length > 0) {
                 store.dispatch('sendMessage', {'user_id': this.userid, 'messagetext': msg});
@@ -162,9 +160,7 @@ export default {
         async dropDelay() {
             this.delay = 0;
         },
-        messageEncryption() {
-            let message = this.inputmessage;
-            let skey = this.skey;
+        encryptMessage(skey, message) {
             let output = '';
             let letter;
             let key;
@@ -176,12 +172,13 @@ export default {
                 output += String.fromCharCode(letter ^ key);
             }
             return output;
-        },
+}
 
     },
     async created() {
         await this.getmessages();
         await this.getProfile();
+
     },
 }
 </script>

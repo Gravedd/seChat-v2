@@ -74,6 +74,9 @@ export default {
                 'type': 'auth'
             });
             context.state.websocket.send(jsontoken);
+        },
+        closeSocket() {
+            context.state.websocket.close();
         }
     },
     modules: {

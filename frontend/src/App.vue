@@ -24,8 +24,10 @@ export default {
     },
     created() {
         store.dispatch('deviceStart');
-        store.dispatch('CHECKLOGIN');
-        store.dispatch('connectws');
+        if (store.getters.authstatus) {
+            store.dispatch('CHECKLOGIN');
+            store.dispatch('connectws');
+        }
     },
 }
 </script>

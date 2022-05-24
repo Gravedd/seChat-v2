@@ -114,6 +114,7 @@ export default createStore({
                     case 201:
                         context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result['status']});
                             //Переход к профилю
+                        context.dispatch('connectws');
                         router.push('/myprofile/');
                         break;
                     //Не корректные данные
@@ -158,6 +159,7 @@ export default createStore({
                 //Не удачная проверка токена
                 default:
                     context.commit('authchecknotsuccess');
+                    context.dispatch('closeSocket');
                     router.push('/login/');
                     console.log('Не удачная проверка токена. Код ошибки: ' + code);
                     break;
@@ -183,6 +185,7 @@ export default createStore({
             switch (await code) {
                 case 201:
                     context.commit('authsuccess', {'uid': result.uid, 'name': result.name, 'email': result.email, 'token': result.token, 'status': result.status});
+                    context.dispatch('connectws');
                     router.push('/myprofile/');
                     break;
                 case 422:
@@ -215,11 +218,13 @@ export default createStore({
                 case 201:
                     context.commit('authchecknotsuccess');
                     showalert('Успешно', 'Вы вышли из своего аккаунта');
+                    context.dispatch('closeSocket');
                     router.push('/');
                     break;
                 //Не удачная проверка токена
                 default:
                     context.commit('authchecknotsuccess');
+                    context.dispatch('closeSocket');
                     showalert('Ошибка' + code, 'Не известная ошибка');
                     router.push('/');
                     break;

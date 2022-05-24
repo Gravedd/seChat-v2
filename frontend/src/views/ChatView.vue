@@ -22,10 +22,11 @@
                         </div>
                     </h2>
                     <div class="keywrapper" v-show="showExtras">
-                        <input type="text" v-model="skey" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
+                        <input v-show="!showkey" type="password" v-model="skey" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
+                        <input v-show="showkey" type="text" v-model="skey" maxlength="64" placeholder="Ключ... Сообщения не шифруются если поле пустое" title="Введите ключ. Если поле пустое то сообщения не шифруются и недешифрируются">
                         <div class="keys">
-                            <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true"></iconbutton>
-                            <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>
+                            <iconbutton image="/icons/interface/save.svg" title="Сохранить ключ" nopadding="true" @click="saveKey"></iconbutton>
+                            <iconbutton image="/icons/interface/show.svg" title="Показать/скрыть ключ" nopadding="true" @click="keyVisibilityToggle"></iconbutton>
                             <!--<iconbutton image="/icons/interface/hidden.svg" title="Показать/скрыть ключ" nopadding="true"></iconbutton>-->
                             <iconbutton image="/icons/interface/remove.svg" title="Удалить ключ" nopadding="true"></iconbutton>
                         </div>
@@ -65,7 +66,8 @@ export default {
             delay: 0,
             showExtras: true,
             name: null,
-            skey: 'ddddddddddddd',
+            skey: localStorage.getItem('keyid' + this.userid) || 'dddddd321321ddddddd',
+            showkey: false,
         }
     },
     computed: {
@@ -172,7 +174,14 @@ export default {
                 output += String.fromCharCode(letter ^ key);
             }
             return output;
-}
+        },
+        saveKey() {
+            localStorage.setItem('keyid' + this.userid, this.skey);
+            showalert('Успешно!', 'Ключ сохранен на вашем устройстве');
+        },
+        keyVisibilityToggle() {
+            return this.showkey = !this.showkey;
+        }
 
     },
     async created() {

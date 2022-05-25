@@ -50,12 +50,11 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
 
     /** СООБЩЕНИЯ */
-    Route::get('/dialogues/{friend_id}', [\App\Http\Controllers\MessagesController::class, 'getUserMessagesInDialog']);
+//    Route::get('/dialogues/{friend_id}', [\App\Http\Controllers\MessagesController::class, 'getUserMessagesInDialog']);
 
     /** Диалоги */
 /*    Route::get('/dialogues/', [\App\Http\Controllers\DialoguesController::class, 'getDialogues']);*/
 });
-Route::get('/dialogues/', [\App\Http\Controllers\DialoguesController::class, 'getDialogues']);
 /**
  * РОУТЫ АВТОРИЗАЦИИ
  * URL: .../api/...

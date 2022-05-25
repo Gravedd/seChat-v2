@@ -25,9 +25,7 @@ export default {
             state.messages[key].push(data);
         },
         setTyping: (state, data) => {
-            console.log(data)
             state.typing[data.sender_id] = data.status;
-            console.log(state.typing[data.sender_id])
         },
         createTyping: (state, user_id) => {
             state.typing[user_id] = false;
@@ -35,11 +33,12 @@ export default {
     },
     actions: {
         async requestForMessages(context, id) {
-            let jsonSend = {
+            let jsonSend = JSON.stringify({
                 'type' : 'getmessages',
                 'userid' : id,
-            }
-            store.state.ws.websocket.send(JSON.stringify(jsonSend));
+            });
+            context.dispatch('sendWs', jsonSend);
+            /*store.state.ws.websocket.send(JSON.stringify(jsonSend));*/
         },
         async reciveMessages(context, request) {
             request.messages.reverse();
@@ -51,7 +50,8 @@ export default {
                 'to': data.user_id,
                 'messagetext': data.messagetext,
             });
-            store.state.ws.websocket.send(send);
+            context.dispatch('sendWs', send);
+            /*store.state.ws.websocket.send(send);*/
         },
         async newMessage(context, data) {
             context.commit('addReceivedMessage', data);
@@ -65,8 +65,8 @@ export default {
             let send = JSON.stringify({
                 'type': 'typing',
                 'receiver_id': data.receiver_id
-            })
-            store.state.ws.websocket.send(send);
+            });
+            context.dispatch('sendWs', send);
         },
         addTyping(context, data) {
             clearTimeout(context.state.timeid);

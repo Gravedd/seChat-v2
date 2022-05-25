@@ -24,7 +24,8 @@ export default {
     },
     created() {
         store.dispatch('deviceStart');
-        store.dispatch('CHECKLOGIN');
+        store.dispatch( 'CHECKLOGIN');
+        // store.dispatch('CHECKLOGIN');
     },
 }
 </script>

@@ -21,6 +21,7 @@ export default {
     },
     actions:{
         async connectws(context) {
+
             context.state.websocket = new WebSocket(context.getters.websocketsurl);
             let connectioncount = 0;
             context.state.websocket.onerror = function (error) {
@@ -71,11 +72,23 @@ export default {
                 'token': context.getters.gettoken,
                 'type': 'auth'
             });
-            context.state.websocket.send(jsontoken);
+            context.dispatch('sendWs', jsontoken);
+            /*context.state.websocket.send(jsontoken);*/
         },
-        closeSocket() {
+        closeSocket(context) {
             context.state.websocket.close();
         },
+        sendWs(context, message){
+            if (context.state.websocket) {
+                if (context.state.websocket.readyState === 1) {
+                    context.state.websocket.send(message);
+                }
+            } else {
+                console.log('не подключен');
+                console.log(message);
+                setTimeout(context.dispatch, '200', 'sendWs', message);
+            }
+        }
     },
     modules: {
         ChatWS, dialogues

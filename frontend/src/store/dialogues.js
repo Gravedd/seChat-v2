@@ -30,7 +30,7 @@ export default {
     },
     actions: {
         async RequestForDialoguesList() {
-            store.getters.websocket.send(JSON.stringify({
+            store.dispatch('sendWs', JSON.stringify({
                 'type': 'getdialogues'
             }));
         },

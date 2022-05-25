@@ -26,7 +26,6 @@ export default {
         },
         setTypingStatus: (state, value) => {
             state.dialogues[value.key]['typing'] = value.status;
-            console.log(state.dialogues[value.key]['typing']);
         }
     },
     actions: {

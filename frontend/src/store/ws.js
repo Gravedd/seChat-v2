@@ -28,7 +28,6 @@ export default {
             }
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);
-                console.log(response)
                 switch (response.type) {
 
                     case 'sendauthtoken':
@@ -48,7 +47,6 @@ export default {
                         }
                         break;
                     case 'dialogueslist':
-                        console.log(response)
                         context.commit('changeDialogues', response);
                         break;
                     case 'typing':
@@ -77,7 +75,7 @@ export default {
         },
         closeSocket() {
             context.state.websocket.close();
-        }
+        },
     },
     modules: {
         ChatWS, dialogues

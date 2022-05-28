@@ -1,5 +1,5 @@
 <template>
-<div class="notificationContainer">
+<div class="notificationContainer" v-if="notifications[0]">
     <popup-notification
         v-for="(notification, index) in notifications"
             :headertext="notification.headertext"

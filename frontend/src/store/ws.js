@@ -3,7 +3,7 @@ import dialogues from "@/store/dialogues";
 import router from "@/router";
 export default {
     state: {
-        websocketsurl: 'wss://chatapi.ysenin.org.ru:6001',
+        websocketsurl: 'wss://chatapi.ysenin.org.ru/ws/',
         websocket: null,
 
     },

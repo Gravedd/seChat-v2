@@ -7,7 +7,7 @@ import device from "@/store/device";
 export default createStore({
     //Состояния
     state: {
-        apiserver: 'http://sechat.loc/api/',
+        apiserver: 'https://chatapi.ysenin.org.ru/api/',
         token: localStorage.getItem('token') || '',
             username: localStorage.getItem('username') || '',
             useremail: localStorage.getItem('useremail') || '',
@@ -97,7 +97,7 @@ export default createStore({
             let response = await fetch(context.getters.apiserver + 'login', {
                 method: 'POST',
                 headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8',
                 },
                 //Указываем что оправляем
                 body: JSON.stringify({
@@ -145,7 +145,7 @@ export default createStore({
             let response = await fetch(context.getters.apiserver + 'checkauth', {
                 method: 'GET',
                 headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8',
                     'Authorization' : 'Bearer ' + context.getters.gettoken,
                 },
             });
@@ -171,7 +171,7 @@ export default createStore({
             let response = await fetch(context.getters.apiserver + 'register', {
                 method: 'POST',
                 headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8',
                 },
                 //Указываем что оправляем
                 body: JSON.stringify({
@@ -207,7 +207,7 @@ export default createStore({
             let response = await fetch(context.getters.apiserver + 'logout', {
                 method: 'POST',
                 headers: {
-                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '<origin>',
+                    'Accept' : 'application/json','Content-Type': 'application/json;charset=utf-8',
                     'Authorization' : 'Bearer ' + context.getters.gettoken,
                 },
             });

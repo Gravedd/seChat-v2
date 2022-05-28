@@ -105,7 +105,6 @@ export default {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json;charset=utf-8',
-                        'Access-Control-Allow-Origin': '<origin>',
                         'Authorization': 'Bearer ' + store.getters.gettoken,
                     }
                 });

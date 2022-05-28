@@ -30,38 +30,6 @@ export default {
         async register() {
             store.dispatch('REGISTER', {'name': this.name, 'email': this.email, 'password': this.password, 'password_confirmation': this.password_confirmation });
         }
-
-        // async auth() {
-        //     let response = await fetch(store.server + 'register', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Accept' : 'application/json',
-        //             'Content-Type': 'application/json;charset=utf-8',
-        //         },
-        //         body: JSON.stringify({
-        //             'name': this.name,
-        //             'email': this.email,
-        //             'password': this.password,
-        //             'password_confirmation': this.password_confirmation,
-        //         })
-        //     });
-        //     let result = await response.json();
-        //     let code = await response.status;
-        //     switch (await code) {
-        //         case 201:
-        //             console.log('Удачно');
-        //             break;
-        //         case 422:
-        //             console.log('Ошибка 422. Не корректные данные');
-        //             break;
-        //         case 401:
-        //             console.log('Ошибка 401. Не авторизованны');
-        //             break;
-        //         default:
-        //             console.log('Ошибка ' + code);
-        //     }
-        // }
-
     }
 }
 </script>

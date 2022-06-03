@@ -3,7 +3,7 @@ import dialogues from "@/store/dialogues";
 import router from "@/router";
 export default {
     state: {
-        websocketsurl: 'wss://chatapi.ysenin.org.ru/ws/',
+        websocketsurl: 'ws://sechat.loc:6001',
         websocket: null,
 
     },
@@ -26,6 +26,10 @@ export default {
             let connectioncount = 0;
             context.state.websocket.onerror = function (error) {
                     location.reload()
+            }
+            context.state.websocket.onclose = event => {
+                console.log('Переподключение...');
+                context.dispatch('connectws');
             }
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);

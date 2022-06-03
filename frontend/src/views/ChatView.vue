@@ -140,14 +140,16 @@ export default {
             msg = msg.trim();
             if (msg.length > 0) {
                 store.dispatch('sendMessage', {'user_id': this.userid, 'messagetext': msg});
+                let date = new Date();
+                let datenow = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()  + ' ' + date.getHours()  + ':' + date.getMinutes() + ':' + date.getSeconds();
                 let data = {
                     id: 1,
                     receiver_id: this.userid,
                     sender_id: store.getters.getuid,
                     message: msg,
                     readed: 0,
-                    created_at: "2022-04-02 20:44:31.000000",
-                    updated_at: "2022-04-02 20:44:31.000000",
+                    created_at: datenow,
+                    updated_at: datenow,
                 }
                 store.commit('addMessage', data);
                 this.inputmessage = '';

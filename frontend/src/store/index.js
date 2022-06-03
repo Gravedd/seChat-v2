@@ -7,7 +7,7 @@ import device from "@/store/device";
 export default createStore({
     //Состояния
     state: {
-        apiserver: 'https://chatapi.ysenin.org.ru/api/',
+        apiserver: 'http://sechat.loc/api/',
         token: localStorage.getItem('token') || '',
             username: localStorage.getItem('username') || '',
             useremail: localStorage.getItem('useremail') || '',

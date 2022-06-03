@@ -110,6 +110,7 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
+
     public static function checkWsAuth($token) {
         return PersonalAccessToken::findToken($token);
     }

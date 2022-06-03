@@ -14,51 +14,57 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/checkauth', function (Request $request) {
-    return $request->user();
-});
-
-
 /**
- * ГРУППЫ РОУТОВ С ПРОВЕРКОЙ АВТОРИЗАЦИИ
+ * ROUTE GROUPS WITH AUTHORIZATION CHECK
  */
 Route::group(['middleware' => 'auth:sanctum'], function() {
+
     /**
-     * Получить список пользователей
-     * url: /users?page={номер страницы}&q={имя искомого}
+     * Find users by name with pagination
+     * url: /users?page={page num}&q={username}
     */
     Route::get('/users', [\App\Http\Controllers\UsersController::class, 'findUsers']);
 
     /**
-     * Получить пользователя по id
+     * Get user information by id
      * url: /users/{id}
     */
     Route::get('/users/{userid}', [\App\Http\Controllers\UsersController::class, 'getUser']);
 
     /**
-     * Роуты изменений профиля пользователя
+     * User Profile Change Route
      * url: /users/
      */
     Route::patch('/users/', [\App\Http\Controllers\UsersController::class, 'changeSomething']);
+
+    /**
+     * Friends routes
+     * url: /friends/
+     */
+    //Get user friends
     Route::get('/friends', [\App\Http\Controllers\FriendsController::class, 'friendlistapproved']);
+    //Get user unproved friends
     Route::get('/friends/unproved', [\App\Http\Controllers\FriendsController::class, 'friendlistunproved']);
-
-    /** Запрос в друзья(запрос, подтверждение) */
+    //Create friend request
     Route::post('/friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'friendrequest']);
-    /** Удаление из друзей(запрос, подтверждение) */
+    //Remove from friends
     Route::delete('friends/{friend_id}', [\App\Http\Controllers\FriendsController::class, 'deletefriend']);
-
-
-    /** СООБЩЕНИЯ */
-//    Route::get('/dialogues/{friend_id}', [\App\Http\Controllers\MessagesController::class, 'getUserMessagesInDialog']);
-
-    /** Диалоги */
-/*    Route::get('/dialogues/', [\App\Http\Controllers\DialoguesController::class, 'getDialogues']);*/
 });
 /**
- * РОУТЫ АВТОРИЗАЦИИ
+ * AUTHORIZATION ROUTES
  * URL: .../api/...
  */
+//register a user
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+//login a user
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+//logout a user
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+/**
+ * Get user information by token
+ * url: /checkauth
+ */
+Route::middleware('auth:sanctum')->get('/checkauth', function (Request $request) {
+    return $request->user();
+});

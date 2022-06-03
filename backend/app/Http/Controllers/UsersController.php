@@ -12,7 +12,6 @@ class UsersController extends Controller
      * GET /users?page={page_number}&q={search_query}
      * get users with pagination by search query
      *
-     * Requires a auth(token in header)
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      * Return users(5)
@@ -30,7 +29,7 @@ class UsersController extends Controller
     /**
      * GET /users/{user_id}
      * get user by id
-     * Requires a auth(token in header)
+     *
      * @param $userid integer required
      * @return \Illuminate\Http\JsonResponse
      * Return user info
@@ -51,8 +50,8 @@ class UsersController extends Controller
 
     /**
      * PATCH /users
-     * change somethigns user information
-     * Requires a auth(token in header)
+     * change somethings user information
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      * the method is selected according to the sent data

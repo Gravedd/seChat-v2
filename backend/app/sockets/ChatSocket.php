@@ -17,16 +17,26 @@ use Ratchet\ConnectionInterface;
 class ChatSocket extends baseSocket {
     protected $clients;//Соеднинения клиентов
 
+    /**
+     * ChatSocket constructor.
+     * This method starts up websocket server
+     */
     public function __construct() {
         $this->clients = [];
         echo "     Сброс БД...\n";
-        SocketUser::truncate();//Сброс бд
+        SocketUser::truncate();
         echo "     Сброс онлайна...\n";
         User::where('online', 1)->update(['online'=>0]);
         echo "Сервер успешно запущен!\n";
     }
 
-    //Открытие сокета
+    /**
+     * New connection created
+     *
+     * The method saves information about the user in an array and sends him a request to authorize     *
+     * @param ConnectionInterface $conn
+     * @return void
+     */
     public function onOpen(ConnectionInterface $conn) {
         $this->clients[$conn->resourceId] = $conn;
         $this->clients[$conn->resourceId]->auth = false;
@@ -34,7 +44,14 @@ class ChatSocket extends baseSocket {
         $this->sendAuthRequest($conn);
     }
 
-    //Сообщение
+    /**
+     * Server received a message
+     *
+     * The method checks the message type and chooses the appropriate action
+     *
+     * @param ConnectionInterface $from
+     * @param string $msg
+     */
     public function onMessage(ConnectionInterface $from, $msg) {
         echo $from->resourceId . ' : ' . $msg."\n";
         $msg = json_decode($msg, true);
@@ -65,7 +82,13 @@ class ChatSocket extends baseSocket {
         }
 
     }
-    //Закрытие сокета
+
+    /**
+     * Connection closed
+     *
+     * delete user information     *
+     * @param ConnectionInterface $conn
+     */
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
         if (isset($this->clients[$conn->resourceId]->auth)) {
@@ -78,7 +101,13 @@ class ChatSocket extends baseSocket {
         echo "Пользователь ({$conn->resourceId}) отключился\n";
     }
 
-    //Ошибка
+    /**
+     * Connection error
+     *
+     * Write error
+     * @param ConnectionInterface $conn
+     * @param \Exception $e
+     */
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "Ошибка: {$e->getMessage()}\n";
         $conn->close();
@@ -88,6 +117,13 @@ class ChatSocket extends baseSocket {
 
     /** Методы отправки сообщений */
 
+    /**
+     * Sent message to user $receiver_id from $uid
+     *
+     * @param $uid
+     * @param $receiver_id
+     * @param $message
+     */
     protected function sendMessagesToUser ($uid, $receiver_id, $message) {
         $this->checkDialogues($uid, $receiver_id);
         $jsontosend = json_encode([
@@ -110,6 +146,15 @@ class ChatSocket extends baseSocket {
             file_put_contents(app_path() . '/logs/log.txt', $log . PHP_EOL, FILE_APPEND);
         }
     }
+
+    /**
+     * Сhecking if a dialog exists between two users or not
+     *
+     * Create a dialog if it doesn't exist
+     *
+     * @param $uid
+     * @param $receiver_id
+     */
     protected function checkDialogues($uid, $receiver_id) {
         $dialogue = Dialogue::Where(function ($query) use ($uid, $receiver_id){
             $query->Where('user_id', $uid)->Where('user2_id', $receiver_id);
@@ -121,6 +166,12 @@ class ChatSocket extends baseSocket {
         }
     }
 
+    /**
+     * Send message set status to user $receiver_id from $uid
+     *
+     * @param $uid
+     * @param $receiver_id
+     */
     protected function sendTyping ($uid, $receiver_id) {
         $jsontosend = json_encode([
             'type' => 'typing',
@@ -136,10 +187,22 @@ class ChatSocket extends baseSocket {
 
     /** МЕТОДЫ АВТОРИЗАЦИИ */
 
+    /**
+     * Send auth request
+     *
+     * @param $user
+     */
     protected function sendAuthRequest($user){
         $text = json_encode(['type'=>'sendauthtoken']);
         $user->send($text);
     }
+
+    /**
+     * Authorization in websocket
+     *
+     * @param $requser
+     * @param $token
+     */
     protected function Authorization($requser, $token){
         //Получаем объект пользователя по токену
         $user = $this->AuthorizationCheckToken($token);
@@ -156,6 +219,13 @@ class ChatSocket extends baseSocket {
             $requser->send(json_encode(['message'=> 'Не верный токен']));
         }
     }
+
+    /**
+     * Сheck user token
+     *
+     * @param $token
+     * @return false|mixed
+     */
     protected function AuthorizationCheckToken($token){
         //Проверка, есть ли пользователь с таким токеном
         $usertoken = AuthController::checkWsAuth($token);
@@ -169,12 +239,26 @@ class ChatSocket extends baseSocket {
             }
         return $user;
     }
+
+    /**
+     * User successfully authorized
+     *
+     * User information is stored
+     *
+     * @param $uid
+     * @param $resid
+     */
     protected function successAuthenticated($uid, $resid) {
         $socketUser = new SocketUser;
             $socketUser->user_id = $uid;
             $socketUser->resource_id = $resid;
         $socketUser->save();
     }
+
+    /**
+     * Delete socket user from database
+     * @param $resid
+     */
     protected function removeUserInDB($resid){
         $socketUser = SocketUser::Where('resource_id', $resid)->first();
         if (isset($socketUser)) {

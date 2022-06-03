@@ -8,13 +8,12 @@ use Illuminate\Http\Request;
 class FriendsController extends Controller
 {
     /**
-     * Найти друзей какого-либо пользователя
+     * Find friends of a user
      *
-     * Метод ищет в БД друзей пользователя и их профили(id, name),
-     * И возвращает коллекцию
+     * The method searches the database for the user's friends and their profiles (id, name)
      *
-     * @param $userid string - айди пользователя которому необходимо найти друзей
-     * @param $type integer - тип ( 0 - не подтверждено, 1 - подтверждено )
+     * @param $userid string - ID of the user who needs to find friends
+     * @param $type integer - friendship type (0 - unconfirmed, 1 - confirmed)
      * @return mixed
      */
     public function getfriends($userid, $type){
@@ -41,7 +40,7 @@ class FriendsController extends Controller
     /**
      * GET /friends/
      *
-     * Получить информацию о подтвержденных друзьях пользователя
+     * Get information about the user's verified friends
      *
      * @param Request $request - пустой
      * @return \Illuminate\Http\JsonResponse
@@ -53,9 +52,9 @@ class FriendsController extends Controller
     /**
      * GET /friends/unproved
      *
-     * Получить информацию о взодящих заявках в друзья
+     * Get information about friend requests
      *
-     * @param Request $request - пустой
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function friendlistunproved(Request $request) {
@@ -74,10 +73,10 @@ class FriendsController extends Controller
     /**
      * POST /friends/{friend_id}
      *
-     * Запрос в друзья пользователю {friend_id} от пользователя с запросом
+     * Create a friend request to the user {friend_id} from the user with the request
      *
      * @param Request $request
-     * @param $friend_id
+     * @param int $friend_id
      * @return \Illuminate\Http\JsonResponse
      */
     public function friendrequest(Request $request, $friend_id) {
@@ -98,6 +97,16 @@ class FriendsController extends Controller
         $result = $friendrequest->save();
         return response()->json(["status"=> $result, 'message'=>'Запрос в друзья успешно отправлен']);
     }
+
+    /**
+     * DELETE /friends/{friend_id}
+     *
+     * Remove from friends
+     *
+     * @param Request $request
+     * @param int $friend_id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deletefriend(Request $request, $friend_id) {
         $id = $request->user()->id;
         $friendentry = Friend::
@@ -111,6 +120,14 @@ class FriendsController extends Controller
         return response()->json(['status'=> $result, 'message'=> 'Успешно удален из друзей']);
     }
 
+    /**
+     * Сheck if users $id and $friend_id are friends
+     *
+     * @param $id
+     * @param $friend_id
+     * @param $type - friendship type (0 - unconfirmed, 1 - confirmed)
+     * @return bool
+     */
     public static function checkIfUserIsFriend($id, $friend_id, $type){
         $friend = Friend::
         Where(function ($query) use ($id, $friend_id){

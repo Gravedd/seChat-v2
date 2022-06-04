@@ -29,7 +29,9 @@ export default {
             }
             context.state.websocket.onclose = event => {
                 console.log('Переподключение...');
-                context.dispatch('connectws');
+                if (context.getters.authstatus === true) {
+                    context.dispatch('connectws');
+                }
             }
             context.state.websocket.onmessage = event => {
                 let response = JSON.parse(event.data);

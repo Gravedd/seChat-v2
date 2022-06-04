@@ -18,7 +18,7 @@
             <iconbutton image="/icons/interface/remove.svg" nopadding="true" title="закрыть" @click="closemenu"></iconbutton>
         </div>
         <div class="menulist" @click="closemenu">
-            <router-link to="/login">Авторизация</router-link>
+            <router-link to="/login" v-show="!authst">Авторизация</router-link>
             <router-link to="/dialogues" v-show="authst">Диалоги</router-link>
             <router-link to="/myprofile" v-show="authst">Профиль</router-link>
             <router-link to="/search" v-show="authst">Поиск</router-link>
